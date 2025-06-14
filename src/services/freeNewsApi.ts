@@ -1,4 +1,5 @@
 import { NewsItem, unifyCategory } from "./newsApi";
+import { fetchAdditionalFreeContent } from "./additionalFreeApi";
 
 // 使用免费的公开新闻API作为演示
 const DEMO_API_CONFIG = {
@@ -121,18 +122,19 @@ const fetchGuardianNews = async (): Promise<NewsItem[]> => {
   }
 };
 
-// 主要的免费新闻获取函数
+// 主要的免费新闻获取函数 - 整合所有免费数据源
 export const fetchFreeAINews = async (): Promise<NewsItem[]> => {
   try {
-    console.log('开始从免费API获取AI新闻演示数据...');
+    console.log('开始从所有免费API获取AI新闻演示数据...');
     
-    // 并行请求多个免费API
-    const [hackerNewsData, guardianData] = await Promise.all([
+    // 并行请求多个免费API，包括新增的数据源
+    const [hackerNewsData, guardianData, additionalContent] = await Promise.all([
       fetchHackerNews(),
-      fetchGuardianNews()
+      fetchGuardianNews(),
+      fetchAdditionalFreeContent()
     ]);
 
-    const allNews = [...hackerNewsData, ...guardianData];
+    const allNews = [...hackerNewsData, ...guardianData, ...additionalContent];
     
     // 去重和排序
     const uniqueNews = allNews.filter((news, index, self) => 
@@ -142,12 +144,15 @@ export const fetchFreeAINews = async (): Promise<NewsItem[]> => {
     // 按发布时间排序
     const sortedNews = uniqueNews
       .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
-      .slice(0, 15); // 限制数量
+      .slice(0, 30); // 增加限制数量
 
     console.log(`成功获取到 ${sortedNews.length} 条免费AI新闻`);
     console.log('免费新闻来源分布:', {
       HackerNews: hackerNewsData.length,
-      Guardian: guardianData.length
+      Guardian: guardianData.length,
+      Reddit: additionalContent.filter(item => item.source === 'Reddit').length,
+      DevTo: additionalContent.filter(item => item.source === 'Dev.to').length,
+      GitHub: additionalContent.filter(item => item.source === 'GitHub').length
     });
     console.log('免费新闻分类分布:', sortedNews.reduce((acc, news) => {
       acc[news.category] = (acc[news.category] || 0) + 1;
