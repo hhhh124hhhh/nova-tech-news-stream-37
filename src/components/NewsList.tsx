@@ -9,7 +9,7 @@ interface NewsListProps {
 }
 
 const NewsList = ({ selectedCategory }: NewsListProps) => {
-  const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing, currentLanguage, apiStatus } = useNews();
+  const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing, currentLanguage, apiStatus, usingFreeApi } = useNews();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -174,6 +174,11 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
       <div className="mb-6 p-4 bg-slate-800/50 border border-slate-700/50 rounded-lg">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-slate-200 font-medium">{apiStatusInfo.label}</h3>
+          {usingFreeApi && (
+            <span className="text-xs bg-green-600 text-white px-2 py-1 rounded">
+              {currentLanguage === 'en' ? 'Demo API' : '演示API'}
+            </span>
+          )}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {Object.entries(apiStatus).map(([key, active]) => (
@@ -189,6 +194,14 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
             </div>
           ))}
         </div>
+        {usingFreeApi && (
+          <p className="text-xs text-slate-400 mt-2">
+            {currentLanguage === 'en' ? 
+              'Currently using free demo APIs. Configure your API keys for real-time news.' :
+              '当前使用免费演示API。配置您的API密钥以获取实时新闻。'
+            }
+          </p>
+        )}
       </div>
 
       {apiKeyMissing && (

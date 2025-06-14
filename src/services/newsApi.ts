@@ -1,4 +1,3 @@
-
 export interface NewsItem {
   id: string;
   title: string;
@@ -12,26 +11,30 @@ export interface NewsItem {
   source: string;
 }
 
-// 多个新闻API配置
+// 多个新闻API配置 - 支持从localStorage读取用户配置的密钥
+const getApiKey = (key: string) => {
+  return localStorage.getItem(`${key}_key`) || import.meta.env[`VITE_${key.toUpperCase()}_API_KEY`];
+};
+
 const NEWS_APIS = {
   // NewsAPI - 国际新闻 (免费层：每月1000次请求)
   newsapi: {
-    key: import.meta.env.VITE_NEWS_API_KEY,
+    get key() { return getApiKey('newsapi'); },
     baseUrl: 'https://newsapi.org/v2',
   },
   // 聚合数据API - 中国新闻 (免费层：每天100次)
   juhe: {
-    key: import.meta.env.VITE_JUHE_API_KEY,
+    get key() { return getApiKey('juhe'); },
     baseUrl: 'http://v.juhe.cn/toutiao',
   },
   // 天行数据API - 综合新闻 (免费层：每天100次)
   tianapi: {
-    key: import.meta.env.VITE_TIANAPI_KEY,
+    get key() { return getApiKey('tianapi'); },
     baseUrl: 'http://api.tianapi.com',
   },
   // Currents API - 国际新闻替代方案 (免费层：每月600次)
   currents: {
-    key: import.meta.env.VITE_CURRENTS_API_KEY,
+    get key() { return getApiKey('currents'); },
     baseUrl: 'https://api.currentsapi.services/v1',
   }
 };
@@ -261,6 +264,21 @@ const fetchCurrentsNews = async (): Promise<NewsItem[]> => {
     console.error('获取Currents新闻时出错:', error);
     return [];
   }
+};
+
+// 检查是否有任何API密钥可用
+export const hasAnyApiKey = (): boolean => {
+  return !!(NEWS_APIS.newsapi.key || NEWS_APIS.juhe.key || NEWS_APIS.tianapi.key || NEWS_APIS.currents.key);
+};
+
+// 获取API状态
+export const getApiStatus = () => {
+  return {
+    newsapi: !!NEWS_APIS.newsapi.key,
+    juhe: !!NEWS_APIS.juhe.key,
+    tianapi: !!NEWS_APIS.tianapi.key,
+    currents: !!NEWS_APIS.currents.key
+  };
 };
 
 // 主要的新闻获取函数 - 同时从多个API获取

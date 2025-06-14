@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import { Menu, X, Newspaper, Globe, ChevronDown } from "lucide-react";
 import SearchBar from "./SearchBar";
+import ApiSettings from "./ApiSettings";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,9 +15,10 @@ interface HeaderProps {
   selectedCategory: string;
   onLanguageChange: (language: string) => void;
   selectedLanguage: string;
+  onApiKeyChange: (apiKeys: any) => void;
 }
 
-const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selectedLanguage }: HeaderProps) => {
+const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selectedLanguage, onApiKeyChange }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // 扩展AI大模型分类，增加AI绘画、AI视频、AI编程
@@ -174,6 +175,12 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
               </DropdownMenu>
             </nav>
 
+            {/* API Settings */}
+            <ApiSettings 
+              onApiKeyChange={onApiKeyChange}
+              currentLanguage={selectedLanguage}
+            />
+
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -213,6 +220,15 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
           <div className="lg:hidden py-4 border-t border-slate-700/50 space-y-4">
             <SearchBar />
             
+            {/* Mobile API Settings */}
+            <div className="flex items-center justify-between">
+              <span className="text-slate-300 text-sm font-medium">API配置</span>
+              <ApiSettings 
+                onApiKeyChange={onApiKeyChange}
+                currentLanguage={selectedLanguage}
+              />
+            </div>
+
             {/* Mobile Language Selector */}
             <div className="flex items-center justify-between">
               <span className="text-slate-300 text-sm font-medium">{getLanguageSelectorText()}</span>
