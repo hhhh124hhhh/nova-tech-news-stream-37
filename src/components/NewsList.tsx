@@ -1,9 +1,31 @@
 
+import { useState, useEffect } from "react";
 import { useNews } from "@/hooks/useNews";
 import NewsCard from "./NewsCard";
 
 const NewsList = () => {
   const { news, loading } = useNews();
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    // 每秒更新当前时间
+    const interval = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+  };
 
   if (loading) {
     return (
@@ -35,9 +57,14 @@ const NewsList = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-white">最新资讯</h2>
-        <div className="flex items-center space-x-2 text-green-400">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <span className="text-sm font-medium">实时更新</span>
+        <div className="flex items-center space-x-4">
+          <div className="text-slate-300 text-sm">
+            当前时间: <span className="text-blue-400 font-mono">{formatDate(currentDate)}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-green-400">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium">实时更新</span>
+          </div>
         </div>
       </div>
 
