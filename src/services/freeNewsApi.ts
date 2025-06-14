@@ -1,5 +1,4 @@
-
-import { NewsItem } from "./newsApi";
+import { NewsItem, unifyCategory } from "./newsApi";
 
 // 使用免费的公开新闻API作为演示
 const DEMO_API_CONFIG = {
@@ -16,23 +15,38 @@ const categorizeNews = (title: string, content: string): string => {
   const text = (title + ' ' + content).toLowerCase();
   
   const categoryKeywords = {
-    '大语言模型': ['gpt', 'chatgpt', 'claude', 'gemini', 'llm', 'language model', 'transformer', 'bert', 'openai', 'anthropic', 'palm', 'llama'],
-    'AI智能体': ['agent', 'assistant', 'chatbot', 'ai agent', 'virtual assistant', 'conversational ai', 'autogpt', 'langchain'],
+    '大语言模型': ['gpt', 'chatgpt', 'claude', 'gemini', 'llm', 'language model', 'transformer', 'bert', 'openai', 'anthropic', 'palm', 'llama', 'bard'],
+    'AI智能体': ['agent', 'assistant', 'chatbot', 'ai agent', 'virtual assistant', 'conversational ai', 'autogpt', 'langchain', 'autonomous'],
     '多模态AI': ['multimodal', 'vision', 'dall-e', 'midjourney', 'stable diffusion', 'clip', 'text-to-image', 'image generation', 'computer vision'],
-    'AI训练技术': ['training', 'fine-tuning', 'reinforcement learning', 'rlhf', 'dataset', 'model training', 'neural network', 'deep learning'],
-    'AI应用产品': ['copilot', 'ai tool', 'productivity', 'automation', 'ai application', 'ai software', 'ai service'],
+    'AI训练技术': ['training', 'fine-tuning', 'reinforcement learning', 'rlhf', 'dataset', 'model training', 'neural network', 'deep learning', 'machine learning'],
+    'AI应用产品': ['copilot', 'ai tool', 'productivity', 'automation', 'ai application', 'ai software', 'ai service', 'platform'],
     'AI绘画': ['dall-e', 'midjourney', 'stable diffusion', 'ai art', 'image generation', 'art generation', 'creative ai', 'digital art', 'ai painting'],
-    'AI视频': ['sora', 'runway', 'video generation', 'ai video', 'video synthesis', 'deepfake', 'video ai', 'motion graphics'],
-    'AI编程': ['copilot', 'code generation', 'programming assistant', 'ai coding', 'github copilot', 'cursor', 'replit', 'ai developer tools', 'code ai']
+    'AI视频': ['sora', 'runway', 'video generation', 'ai video', 'video synthesis', 'deepfake', 'video ai', 'motion graphics', 'animation'],
+    'AI编程': ['copilot', 'code generation', 'programming assistant', 'ai coding', 'github copilot', 'cursor', 'replit', 'ai developer tools', 'code ai', 'coding', 'programming']
   };
 
+  let bestCategory = 'AI行业动态';
+  let maxScore = 0;
+  
   for (const [category, keywords] of Object.entries(categoryKeywords)) {
-    if (keywords.some(keyword => text.includes(keyword.toLowerCase()))) {
-      return category;
+    let score = 0;
+    for (const keyword of keywords) {
+      if (text.includes(keyword.toLowerCase())) {
+        if (title.toLowerCase().includes(keyword.toLowerCase())) {
+          score += 2;
+        } else {
+          score += 1;
+        }
+      }
+    }
+    
+    if (score > maxScore) {
+      maxScore = score;
+      bestCategory = category;
     }
   }
-
-  return 'AI行业动态';
+  
+  return bestCategory;
 };
 
 // 获取HackerNews的AI相关新闻
@@ -135,6 +149,10 @@ export const fetchFreeAINews = async (): Promise<NewsItem[]> => {
       HackerNews: hackerNewsData.length,
       Guardian: guardianData.length
     });
+    console.log('免费新闻分类分布:', sortedNews.reduce((acc, news) => {
+      acc[news.category] = (acc[news.category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>));
 
     return sortedNews;
 

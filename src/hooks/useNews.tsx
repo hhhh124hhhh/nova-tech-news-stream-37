@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchAINews, NewsItem, getApiStatus, hasAnyApiKey } from "@/services/newsApi";
+import { fetchAINews, NewsItem, getApiStatus, hasAnyApiKey, unifyCategory } from "@/services/newsApi";
 import { fetchFreeAINews } from "@/services/freeNewsApi";
 import { translateNewsItem } from "@/services/translationApi";
 
@@ -198,10 +198,26 @@ export const useNews = () => {
 
   const getNewsByCategory = (category: string) => {
     const newsToFilter = currentLanguage === 'zh' ? news : translatedNews;
-    if (category === "全部" || category === "All" || category === "すべて" || category === "전체") {
+    
+    // 统一分类到中文基准
+    const unifiedCategory = unifyCategory(category);
+    
+    console.log(`筛选分类: ${category} -> ${unifiedCategory}`);
+    
+    if (unifiedCategory === "全部") {
+      console.log(`返回全部新闻: ${newsToFilter.length} 条`);
       return newsToFilter;
     }
-    return newsToFilter.filter(item => item.category === category);
+    
+    const filtered = newsToFilter.filter(item => {
+      const itemUnifiedCategory = unifyCategory(item.category);
+      return itemUnifiedCategory === unifiedCategory;
+    });
+    
+    console.log(`分类 ${unifiedCategory} 的新闻数量: ${filtered.length}`);
+    console.log('可用分类:', [...new Set(newsToFilter.map(item => unifyCategory(item.category)))]);
+    
+    return filtered;
   };
 
   const getNewsById = (id: string) => {

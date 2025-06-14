@@ -40,40 +40,142 @@ const NEWS_APIS = {
   }
 };
 
-// AI大模型相关关键词映射到分类
-const categoryKeywords = {
-  '大语言模型': ['gpt', 'chatgpt', 'claude', 'gemini', 'llm', 'language model', 'transformer', 'bert', 'openai', 'anthropic', 'palm', 'llama', '大语言模型', '语言模型'],
-  'AI智能体': ['agent', 'assistant', 'chatbot', 'ai agent', 'virtual assistant', 'conversational ai', 'autogpt', 'langchain', '智能体', '助手'],
-  '多模态AI': ['multimodal', 'vision', 'dall-e', 'midjourney', 'stable diffusion', 'clip', 'text-to-image', 'image generation', 'computer vision', '多模态', '视觉'],
-  'AI训练技术': ['training', 'fine-tuning', 'reinforcement learning', 'rlhf', 'dataset', 'model training', 'neural network', 'deep learning', '训练', '微调', '神经网络'],
-  'AI应用产品': ['copilot', 'ai tool', 'productivity', 'automation', 'ai application', 'ai software', 'ai service', 'AI应用', '应用产品'],
-  'AI行业动态': ['funding', 'investment', 'startup', 'company', 'acquisition', 'partnership', 'regulation', 'policy', 'market', '投资', '公司', '政策', '市场'],
-  'AI绘画': ['dall-e', 'midjourney', 'stable diffusion', 'ai art', 'image generation', 'art generation', 'creative ai', 'digital art', 'ai painting', 'AI绘画', '图像生成', 'AI画画'],
-  'AI视频': ['sora', 'runway', 'video generation', 'ai video', 'video synthesis', 'deepfake', 'video ai', 'motion graphics', 'AI视频', '视频生成', 'Sora'],
-  'AI编程': ['copilot', 'code generation', 'programming assistant', 'ai coding', 'github copilot', 'cursor', 'replit', 'ai developer tools', 'code ai', 'AI编程', '代码生成', '编程助手']
+// 分类映射 - 支持多语言分类映射到统一的中文分类
+const categoryMapping = {
+  // 中文分类（基准）
+  '全部': '全部',
+  '大语言模型': '大语言模型', 
+  'AI绘画': 'AI绘画',
+  'AI视频': 'AI视频',
+  'AI编程': 'AI编程',
+  'AI智能体': 'AI智能体',
+  '多模态AI': '多模态AI',
+  'AI训练技术': 'AI训练技术',
+  'AI应用产品': 'AI应用产品',
+  'AI行业动态': 'AI行业动态',
+  
+  // 英文分类映射
+  'All': '全部',
+  'Large Language Models': '大语言模型',
+  'AI Art Generation': 'AI绘画',
+  'AI Video': 'AI视频', 
+  'AI Programming': 'AI编程',
+  'AI Agents': 'AI智能体',
+  'Multimodal AI': '多模态AI',
+  'AI Training Technology': 'AI训练技术',
+  'AI Applications & Products': 'AI应用产品',
+  'AI Industry News': 'AI行业动态',
+  
+  // 日文分类映射
+  'すべて': '全部',
+  '大規模言語モデル': '大语言模型',
+  'AI画像生成': 'AI绘画',
+  'AI動画': 'AI视频',
+  'AIプログラミング': 'AI编程', 
+  'AIエージェント': 'AI智能体',
+  'マルチモーダルAI': '多模态AI',
+  'AI訓練技術': 'AI训练技术',
+  'AIアプリケーション・製品': 'AI应用产品',
+  'AI業界ニュース': 'AI行业动态',
+  
+  // 韩文分类映射
+  '전체': '全部',
+  '대규모 언어 모델': '大语言模型',
+  'AI 그림 생성': 'AI绘画',
+  'AI 비디오': 'AI视频',
+  'AI 프로그래밍': 'AI编程',
+  'AI 에이전트': 'AI智能体',
+  '멀티모달 AI': '多模态AI',
+  'AI 훈련 기술': 'AI训练技术',
+  'AI 애플리케이션 및 제품': 'AI应用产品',
+  'AI 업계 뉴스': 'AI行业动态'
 };
 
-// 智能分类函数
+// AI大模型相关关键词映射到分类 - 扩展关键词库
+const categoryKeywords = {
+  '大语言模型': [
+    'gpt', 'chatgpt', 'claude', 'gemini', 'llm', 'language model', 'transformer', 'bert', 'openai', 'anthropic', 
+    'palm', 'llama', 'bard', 'copilot', '大语言模型', '语言模型', '生成式ai', 'generative ai', 'large language',
+    'gpt-4', 'gpt-3', 'davinci', 'text-davinci', 'chat completion', 'completion api', '文本生成', 'text generation'
+  ],
+  'AI智能体': [
+    'agent', 'assistant', 'chatbot', 'ai agent', 'virtual assistant', 'conversational ai', 'autogpt', 'langchain', 
+    '智能体', '助手', 'autonomous', 'multi-agent', 'agent framework', 'ai bot', 'intelligent agent', 
+    'personal assistant', 'voice assistant', '语音助手', '智能助理', 'workflow automation'
+  ],
+  '多模态AI': [
+    'multimodal', 'vision', 'dall-e', 'midjourney', 'stable diffusion', 'clip', 'text-to-image', 'image generation', 
+    'computer vision', '多模态', '视觉', 'vision transformer', 'vit', 'image understanding', 'visual ai',
+    'text to image', 'image to text', 'vision language', 'vlm', '视觉语言模型'
+  ],
+  'AI训练技术': [
+    'training', 'fine-tuning', 'reinforcement learning', 'rlhf', 'dataset', 'model training', 'neural network', 
+    'deep learning', '训练', '微调', '神经网络', 'machine learning', 'ml', 'gradient descent', 'backpropagation',
+    'optimization', 'hyperparameter', 'overfitting', 'regularization', '深度学习', '机器学习', 'transfer learning'
+  ],
+  'AI应用产品': [
+    'copilot', 'ai tool', 'productivity', 'automation', 'ai application', 'ai software', 'ai service', 
+    'AI应用', '应用产品', 'saas', 'platform', 'api', 'integration', '生产力工具', 'workflow', 'enterprise ai',
+    'business ai', 'ai platform', 'ai solution', '解决方案', 'no-code', 'low-code'
+  ],
+  'AI行业动态': [
+    'funding', 'investment', 'startup', 'company', 'acquisition', 'partnership', 'regulation', 'policy', 'market', 
+    '投资', '公司', '政策', '市场', 'ipo', 'venture capital', 'valuation', 'merger', '并购', '监管', '法规',
+    'industry', 'business', 'economy', 'stock', 'revenue', 'growth', '增长', '收益', '估值'
+  ],
+  'AI绘画': [
+    'dall-e', 'midjourney', 'stable diffusion', 'ai art', 'image generation', 'art generation', 'creative ai', 
+    'digital art', 'ai painting', 'AI绘画', '图像生成', 'AI画画', 'text-to-image', 'img2img', 'inpainting',
+    'style transfer', 'artistic', 'creative', '创作', '艺术', 'illustration', 'design', '设计'
+  ],
+  'AI视频': [
+    'sora', 'runway', 'video generation', 'ai video', 'video synthesis', 'deepfake', 'video ai', 'motion graphics', 
+    'AI视频', '视频生成', 'text-to-video', 'video editing', 'animation', '动画', 'motion', '运动',
+    'video creation', 'film', 'movie', 'cinematography', '电影', '影视'
+  ],
+  'AI编程': [
+    'copilot', 'code generation', 'programming assistant', 'ai coding', 'github copilot', 'cursor', 'replit', 
+    'ai developer tools', 'code ai', 'AI编程', '代码生成', '编程助手', 'coding', 'programming', 'developer',
+    'software', 'code completion', 'code review', '代码审查', 'debugging', '调试', 'refactoring', '重构'
+  ]
+};
+
+// 智能分类函数 - 改进的分类逻辑
 const categorizeNews = (title: string, content: string): string => {
   const text = (title + ' ' + content).toLowerCase();
   
-  // 检查每个分类的关键词
+  // 检查每个分类的关键词，使用权重系统
+  let bestCategory = 'AI行业动态';
+  let maxScore = 0;
+  
   for (const [category, keywords] of Object.entries(categoryKeywords)) {
-    if (keywords.some(keyword => text.includes(keyword.toLowerCase()))) {
-      return category;
+    let score = 0;
+    for (const keyword of keywords) {
+      if (text.includes(keyword.toLowerCase())) {
+        // 标题中的关键词权重更高
+        if (title.toLowerCase().includes(keyword.toLowerCase())) {
+          score += 2;
+        } else {
+          score += 1;
+        }
+      }
+    }
+    
+    if (score > maxScore) {
+      maxScore = score;
+      bestCategory = category;
     }
   }
   
-  // 默认分类
-  if (text.includes('ai') || text.includes('artificial intelligence') || text.includes('machine learning') || 
-      text.includes('人工智能') || text.includes('机器学习') || text.includes('智能')) {
-    return 'AI行业动态';
-  }
-  
-  return 'AI行业动态';
+  return bestCategory;
 };
 
-// NewsAPI - 国际AI新闻
+// 统一分类函数 - 将任何语言的分类映射到中文基准分类
+export const unifyCategory = (category: string): string => {
+  return categoryMapping[category as keyof typeof categoryMapping] || category;
+};
+
+// NewsAPI - 国际AI新闻 - 扩展搜索关键词
 const fetchNewsAPIData = async (): Promise<NewsItem[]> => {
   if (!NEWS_APIS.newsapi.key) {
     console.log('NewsAPI密钥未设置');
@@ -81,20 +183,21 @@ const fetchNewsAPIData = async (): Promise<NewsItem[]> => {
   }
 
   try {
-    // AI相关搜索关键词，专注于大模型相关
+    // 更全面的AI相关搜索关键词
     const aiKeywords = [
-      'GPT OR ChatGPT OR OpenAI OR "large language model"',
-      '"AI art" OR "AI painting" OR Midjourney OR DALL-E OR "Stable Diffusion"',
-      '"AI video" OR Sora OR "video generation" OR "AI animation"',
-      '"AI coding" OR "AI programming" OR Copilot OR "code generation"',
-      '"AI agent" OR "AI assistant" OR "autonomous AI"'
+      'OpenAI OR ChatGPT OR "GPT-4" OR "large language model" OR LLM',
+      '"AI art" OR "AI painting" OR Midjourney OR DALL-E OR "Stable Diffusion" OR "image generation"',
+      '"AI video" OR Sora OR "video generation" OR "AI animation" OR Runway',
+      '"AI coding" OR "AI programming" OR Copilot OR "code generation" OR "GitHub Copilot"',
+      '"AI agent" OR "AI assistant" OR "autonomous AI" OR AutoGPT OR "AI automation"',
+      '"artificial intelligence" OR "machine learning" OR "deep learning" OR "neural network"'
     ];
 
     const allNews: NewsItem[] = [];
 
-    for (const keyword of aiKeywords.slice(0, 3)) { // 限制请求数量避免超额
+    for (const keyword of aiKeywords.slice(0, 4)) { // 限制请求数量
       const response = await fetch(
-        `${NEWS_APIS.newsapi.baseUrl}/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=10&apiKey=${NEWS_APIS.newsapi.key}`
+        `${NEWS_APIS.newsapi.baseUrl}/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=15&apiKey=${NEWS_APIS.newsapi.key}`
       );
 
       if (!response.ok) {
@@ -318,6 +421,10 @@ export const fetchAINews = async (): Promise<NewsItem[]> => {
       天行数据: tianAPIData.length,
       CurrentsAPI: currentsData.length
     });
+    console.log('分类分布:', sortedNews.reduce((acc, news) => {
+      acc[news.category] = (acc[news.category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>));
 
     return sortedNews;
 
