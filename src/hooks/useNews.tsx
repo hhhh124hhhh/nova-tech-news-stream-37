@@ -3,7 +3,7 @@ import { fetchAINews, NewsItem, getApiStatus, hasAnyApiKey } from "@/services/ne
 import { fetchFreeAINews } from "@/services/freeNewsApi";
 import { translateNewsItem } from "@/services/translationApi";
 
-// 更新为AI大模型相关的模拟数据，包含新的分类
+// 更新为AI大模型相关的模拟数据，包含原始链接
 const mockNews: NewsItem[] = [
   {
     id: "mock-1",
@@ -15,7 +15,8 @@ const mockNews: NewsItem[] = [
     category: "大语言模型",
     imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
     readTime: "4分钟",
-    source: "OpenAI"
+    source: "OpenAI",
+    originalUrl: "https://openai.com/blog/gpt-4-5"
   },
   {
     id: "mock-2", 
@@ -27,7 +28,8 @@ const mockNews: NewsItem[] = [
     category: "AI绘画",
     imageUrl: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80",
     readTime: "3分钟",
-    source: "Midjourney"
+    source: "Midjourney",
+    originalUrl: "https://midjourney.com/v6-release"
   },
   {
     id: "mock-3",
@@ -39,7 +41,8 @@ const mockNews: NewsItem[] = [
     category: "AI视频",
     imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
     readTime: "5分钟",
-    source: "OpenAI"
+    source: "OpenAI",
+    originalUrl: "https://openai.com/blog/sora"
   },
   {
     id: "mock-4",
@@ -51,7 +54,8 @@ const mockNews: NewsItem[] = [
     category: "AI编程",
     imageUrl: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=800&q=80",
     readTime: "4分钟",
-    source: "GitHub"
+    source: "GitHub",
+    originalUrl: "https://github.com/features/copilot"
   },
   {
     id: "mock-5",
@@ -63,7 +67,8 @@ const mockNews: NewsItem[] = [
     category: "AI智能体",
     imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
     readTime: "3分钟",
-    source: "AutoGPT"
+    source: "AutoGPT",
+    originalUrl: "https://autogpt.co"
   },
   {
     id: "mock-6",
@@ -75,7 +80,8 @@ const mockNews: NewsItem[] = [
     category: "AI训练技术",
     imageUrl: "https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=800&q=80",
     readTime: "6分钟",
-    source: "Nature"
+    source: "Nature",
+    originalUrl: "https://www.nature.com/articles/s41586-023-06525-1"
   }
 ];
 

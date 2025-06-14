@@ -9,6 +9,7 @@ export interface NewsItem {
   imageUrl?: string;
   readTime: string;
   source: string;
+  originalUrl?: string;
 }
 
 // 多个新闻API配置 - 支持从localStorage读取用户配置的密钥
@@ -80,20 +81,20 @@ const fetchNewsAPIData = async (): Promise<NewsItem[]> => {
   }
 
   try {
-    // AI相关搜索关键词，包含中英文
+    // AI相关搜索关键词，专注于大模型相关
     const aiKeywords = [
-      'ChatGPT OR OpenAI OR GPT-4 OR Claude OR Anthropic',
-      'Gemini OR Bard OR "Google AI" OR "AI agent"',
-      'DALL-E OR Midjourney OR "AI art" OR Sora',
-      'LLM OR "large language model" OR "multimodal AI"',
-      '"artificial intelligence" OR "machine learning"'
+      'GPT OR ChatGPT OR OpenAI OR "large language model"',
+      '"AI art" OR "AI painting" OR Midjourney OR DALL-E OR "Stable Diffusion"',
+      '"AI video" OR Sora OR "video generation" OR "AI animation"',
+      '"AI coding" OR "AI programming" OR Copilot OR "code generation"',
+      '"AI agent" OR "AI assistant" OR "autonomous AI"'
     ];
 
     const allNews: NewsItem[] = [];
 
-    for (const keyword of aiKeywords.slice(0, 2)) { // 限制请求数量避免超额
+    for (const keyword of aiKeywords.slice(0, 3)) { // 限制请求数量避免超额
       const response = await fetch(
-        `${NEWS_APIS.newsapi.baseUrl}/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=15&apiKey=${NEWS_APIS.newsapi.key}`
+        `${NEWS_APIS.newsapi.baseUrl}/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=10&apiKey=${NEWS_APIS.newsapi.key}`
       );
 
       if (!response.ok) {
@@ -112,7 +113,7 @@ const fetchNewsAPIData = async (): Promise<NewsItem[]> => {
             !article.description.includes('[Removed]')
           )
           .map((article: any) => ({
-            id: article.url || `news-${Date.now()}-${Math.random()}`,
+            id: `newsapi-${article.url?.split('/').pop() || Date.now()}-${Math.random()}`,
             title: article.title,
             summary: article.description,
             content: article.content || article.description,
@@ -121,7 +122,8 @@ const fetchNewsAPIData = async (): Promise<NewsItem[]> => {
             category: categorizeNews(article.title, article.description),
             imageUrl: article.urlToImage || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
             readTime: '3分钟',
-            source: article.source?.name || 'NewsAPI'
+            source: article.source?.name || 'NewsAPI',
+            originalUrl: article.url
           }));
 
         allNews.push(...newsItems);
@@ -143,7 +145,6 @@ const fetchJuheNews = async (): Promise<NewsItem[]> => {
   }
 
   try {
-    // 科技类新闻，包含AI相关内容
     const response = await fetch(
       `${NEWS_APIS.juhe.baseUrl}/index?type=keji&key=${NEWS_APIS.juhe.key}`
     );
@@ -161,7 +162,8 @@ const fetchJuheNews = async (): Promise<NewsItem[]> => {
           const text = (article.title + ' ' + (article.content || '')).toLowerCase();
           return text.includes('ai') || text.includes('人工智能') || text.includes('智能') || 
                  text.includes('机器学习') || text.includes('深度学习') || text.includes('chatgpt') ||
-                 text.includes('大模型') || text.includes('算法');
+                 text.includes('大模型') || text.includes('算法') || text.includes('绘画') ||
+                 text.includes('视频') || text.includes('编程');
         })
         .map((article: any) => ({
           id: article.uniquekey || `juhe-${Date.now()}-${Math.random()}`,
@@ -173,7 +175,8 @@ const fetchJuheNews = async (): Promise<NewsItem[]> => {
           category: categorizeNews(article.title, article.content || ''),
           imageUrl: article.thumbnail_pic_s || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
           readTime: '3分钟',
-          source: '聚合数据'
+          source: '聚合数据',
+          originalUrl: article.url
         }));
     }
 
@@ -214,7 +217,8 @@ const fetchTianAPINews = async (): Promise<NewsItem[]> => {
         category: categorizeNews(article.title, article.description || ''),
         imageUrl: article.picUrl || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
         readTime: '4分钟',
-        source: article.source || '天行数据'
+        source: article.source || '天行数据',
+        originalUrl: article.url
       }));
     }
 
@@ -255,7 +259,8 @@ const fetchCurrentsNews = async (): Promise<NewsItem[]> => {
         category: categorizeNews(article.title, article.description),
         imageUrl: article.image || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
         readTime: '3分钟',
-        source: 'Currents API'
+        source: 'Currents API',
+        originalUrl: article.url
       }));
     }
 

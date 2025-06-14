@@ -60,7 +60,8 @@ const fetchHackerNews = async (): Promise<NewsItem[]> => {
           category: categorizeNews(item.title, item.story_text || ''),
           imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
           readTime: '3分钟',
-          source: 'HackerNews'
+          source: 'HackerNews',
+          originalUrl: item.url
         }));
     }
 
@@ -94,7 +95,8 @@ const fetchGuardianNews = async (): Promise<NewsItem[]> => {
         category: categorizeNews(item.webTitle, item.fields?.trailText || ''),
         imageUrl: item.fields?.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
         readTime: '4分钟',
-        source: 'The Guardian'
+        source: 'The Guardian',
+        originalUrl: item.webUrl
       }));
     }
 

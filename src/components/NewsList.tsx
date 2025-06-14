@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNews } from "@/hooks/useNews";
 import NewsCard from "./NewsCard";
@@ -26,6 +27,34 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
   }, []);
 
   const formatDate = (date: Date) => {
+    if (currentLanguage === 'en') {
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+    } else if (currentLanguage === 'ja') {
+      return date.toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+    } else if (currentLanguage === 'ko') {
+      return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+    }
     return date.toLocaleString('zh-CN', {
       year: 'numeric',
       month: '2-digit',
@@ -50,10 +79,10 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
     const isAllCategory = selectedCategory === "全部" || selectedCategory === "All" || selectedCategory === "すべて" || selectedCategory === "전체";
     
     if (isAllCategory) {
-      if (currentLanguage === 'en') return "Latest News";
-      if (currentLanguage === 'ja') return "最新ニュース";
-      if (currentLanguage === 'ko') return "최신 뉴스";
-      return "最新资讯";
+      if (currentLanguage === 'en') return "Latest AI News";
+      if (currentLanguage === 'ja') return "最新AIニュース";
+      if (currentLanguage === 'ko') return "최신 AI 뉴스";
+      return "最新AI资讯";
     }
     
     return selectedCategory;
@@ -226,6 +255,7 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
             category={article.category}
             imageUrl={article.imageUrl}
             readTime={article.readTime}
+            originalUrl={article.originalUrl}
             onReadMore={handleReadMore}
           />
         ))}

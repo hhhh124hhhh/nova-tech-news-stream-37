@@ -1,14 +1,11 @@
+
 import { useState } from "react";
-import { Menu, X, Newspaper, Globe, ChevronDown } from "lucide-react";
+import { Menu, X, Newspaper } from "lucide-react";
 import SearchBar from "./SearchBar";
 import ApiSettings from "./ApiSettings";
+import CategoryNav from "./CategoryNav";
+import LanguageSelector from "./LanguageSelector";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   onCategoryChange: (category: string) => void;
@@ -21,100 +18,77 @@ interface HeaderProps {
 const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selectedLanguage, onApiKeyChange }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 扩展AI大模型分类，增加AI绘画、AI视频、AI编程
+  // 优化的AI分类 - 专注于用户关心的5个核心领域
   const getCategories = () => {
     if (selectedLanguage === 'en') {
       return [
         "All", 
         "Large Language Models", 
+        "AI Art Generation",
+        "AI Video",
+        "AI Programming",
         "AI Agents", 
         "Multimodal AI", 
         "AI Training Technology", 
         "AI Applications & Products", 
-        "AI Industry News",
-        "AI Art Generation",
-        "AI Video",
-        "AI Programming"
+        "AI Industry News"
       ];
     } else if (selectedLanguage === 'ja') {
       return [
         "すべて", 
         "大規模言語モデル", 
+        "AI画像生成",
+        "AI動画",
+        "AIプログラミング",
         "AIエージェント", 
         "マルチモーダルAI", 
         "AI訓練技術", 
         "AIアプリケーション・製品", 
-        "AI業界ニュース",
-        "AI画像生成",
-        "AI動画",
-        "AIプログラミング"
+        "AI業界ニュース"
       ];
     } else if (selectedLanguage === 'ko') {
       return [
         "전체", 
         "대규모 언어 모델", 
+        "AI 그림 생성",
+        "AI 비디오",
+        "AI 프로그래밍",
         "AI 에이전트", 
         "멀티모달 AI", 
         "AI 훈련 기술", 
         "AI 애플리케이션 및 제품", 
-        "AI 업계 뉴스",
-        "AI 그림 생성",
-        "AI 비디오",
-        "AI 프로그래밍"
+        "AI 업계 뉴스"
       ];
     } else {
       return [
         "全部", 
         "大语言模型", 
+        "AI绘画",
+        "AI视频",
+        "AI编程",
         "AI智能体", 
         "多模态AI", 
         "AI训练技术", 
         "AI应用产品", 
-        "AI行业动态",
-        "AI绘画",
-        "AI视频",
-        "AI编程"
+        "AI行业动态"
       ];
     }
   };
 
   const categories = getCategories();
 
-  const languages = [
-    { code: "zh", name: "中文", flag: "🇨🇳" },
-    { code: "en", name: "English", flag: "🇺🇸" },
-    { code: "ja", name: "日本語", flag: "🇯🇵" },
-    { code: "ko", name: "한국어", flag: "🇰🇷" }
-  ];
-
-  const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
-
   const getHeaderTitle = () => {
-    if (selectedLanguage === 'en') return "AI LLM News";
-    if (selectedLanguage === 'ja') return "AI大規模言語モデルニュース";
-    if (selectedLanguage === 'ko') return "AI 대규모 언어 모델 뉴스";
-    return "AI大模型资讯";
+    if (selectedLanguage === 'en') return "AI News Hub";
+    if (selectedLanguage === 'ja') return "AIニュースハブ";
+    if (selectedLanguage === 'ko') return "AI 뉴스 허브";
+    return "AI资讯中心";
   };
 
   const getHeaderSubtitle = () => {
-    if (selectedLanguage === 'en') return "Professional AI Large Language Model News Platform";
-    if (selectedLanguage === 'ja') return "専門AI大規模言語モデルニュースプラットフォーム";
-    if (selectedLanguage === 'ko') return "전문 AI 대규모 언어 모델 뉴스 플랫폼";
-    return "专业AI大语言模型新闻平台";
-  };
-
-  const getMoreCategoriesText = () => {
-    if (selectedLanguage === 'en') return "More Categories";
-    if (selectedLanguage === 'ja') return "その他のカテゴリ";
-    if (selectedLanguage === 'ko') return "더 많은 카테고리";
-    return "更多分类";
-  };
-
-  const getLanguageSelectorText = () => {
-    if (selectedLanguage === 'en') return "Language";
-    if (selectedLanguage === 'ja') return "言語選択";
-    if (selectedLanguage === 'ko') return "언어 선택";
-    return "语言选择";
+    if (selectedLanguage === 'en') return "Latest AI & LLM Industry Updates";
+    if (selectedLanguage === 'ja') return "最新AI・LLM業界アップデート";
+    if (selectedLanguage === 'ko') return "최신 AI 및 LLM 업계 업데이트";
+    return "最新AI大模型行业动态";
   };
 
   return (
@@ -137,43 +111,12 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
             <SearchBar />
             
             {/* Categories */}
-            <nav className="flex space-x-1">
-              {categories.slice(0, 4).map((category) => (
-                <Button
-                  key={category}
-                  onClick={() => onCategoryChange(category)}
-                  variant={selectedCategory === category ? "default" : "ghost"}
-                  size="sm"
-                  className={`transition-all duration-200 text-xs ${
-                    selectedCategory === category
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                  }`}
-                >
-                  {category}
-                </Button>
-              ))}
-              
-              {/* More Categories Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800 text-xs">
-                    {getMoreCategoriesText()} <ChevronDown className="ml-1 h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-slate-800 border-slate-700">
-                  {categories.slice(4).map((category) => (
-                    <DropdownMenuItem
-                      key={category}
-                      onClick={() => onCategoryChange(category)}
-                      className="text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer"
-                    >
-                      {category}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </nav>
+            <CategoryNav 
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={onCategoryChange}
+              currentLanguage={selectedLanguage}
+            />
 
             {/* API Settings */}
             <ApiSettings 
@@ -182,28 +125,10 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
             />
 
             {/* Language Selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
-                  <Globe className="h-4 w-4 mr-2" />
-                  <span className="mr-1">{currentLanguage.flag}</span>
-                  <span className="hidden sm:inline">{currentLanguage.name}</span>
-                  <ChevronDown className="ml-1 h-3 w-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-slate-800 border-slate-700">
-                {languages.map((language) => (
-                  <DropdownMenuItem
-                    key={language.code}
-                    onClick={() => onLanguageChange(language.code)}
-                    className="text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer"
-                  >
-                    <span className="mr-2">{language.flag}</span>
-                    {language.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <LanguageSelector 
+              currentLanguage={selectedLanguage}
+              onLanguageChange={onLanguageChange}
+            />
           </div>
 
           {/* Mobile Menu Button */}
@@ -231,28 +156,11 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
 
             {/* Mobile Language Selector */}
             <div className="flex items-center justify-between">
-              <span className="text-slate-300 text-sm font-medium">{getLanguageSelectorText()}</span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="bg-slate-800 border-slate-600 text-slate-300">
-                    <span className="mr-2">{currentLanguage.flag}</span>
-                    {currentLanguage.name}
-                    <ChevronDown className="ml-1 h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-slate-800 border-slate-700">
-                  {languages.map((language) => (
-                    <DropdownMenuItem
-                      key={language.code}
-                      onClick={() => onLanguageChange(language.code)}
-                      className="text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer"
-                    >
-                      <span className="mr-2">{language.flag}</span>
-                      {language.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <span className="text-slate-300 text-sm font-medium">语言选择</span>
+              <LanguageSelector 
+                currentLanguage={selectedLanguage}
+                onLanguageChange={onLanguageChange}
+              />
             </div>
 
             {/* Mobile Categories */}

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Calendar, User, ExternalLink } from "lucide-react";
+import { Calendar, User, ExternalLink, Link } from "lucide-react";
 
 interface NewsCardProps {
   id: string;
@@ -11,11 +11,19 @@ interface NewsCardProps {
   category: string;
   imageUrl?: string;
   readTime: string;
+  originalUrl?: string;
   onReadMore: (id: string) => void;
 }
 
-const NewsCard = ({ id, title, summary, author, publishDate, category, imageUrl, readTime, onReadMore }: NewsCardProps) => {
+const NewsCard = ({ id, title, summary, author, publishDate, category, imageUrl, readTime, originalUrl, onReadMore }: NewsCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleOriginalLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (originalUrl) {
+      window.open(originalUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <article
@@ -35,6 +43,17 @@ const NewsCard = ({ id, title, summary, author, publishDate, category, imageUrl,
               {category}
             </span>
           </div>
+          {originalUrl && (
+            <div className="absolute top-4 right-4">
+              <button
+                onClick={handleOriginalLinkClick}
+                className="p-2 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-black/70 transition-colors"
+                title="查看原文"
+              >
+                <Link className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -63,15 +82,27 @@ const NewsCard = ({ id, title, summary, author, publishDate, category, imageUrl,
           {summary}
         </p>
 
-        <button
-          onClick={() => onReadMore(id)}
-          className={`flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-all duration-200 font-medium ${
-            isHovered ? "transform translate-x-1" : ""
-          }`}
-        >
-          <span>阅读全文</span>
-          <ExternalLink className="h-4 w-4" />
-        </button>
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => onReadMore(id)}
+            className={`flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-all duration-200 font-medium ${
+              isHovered ? "transform translate-x-1" : ""
+            }`}
+          >
+            <span>阅读更多</span>
+            <ExternalLink className="h-4 w-4" />
+          </button>
+          
+          {originalUrl && (
+            <button
+              onClick={handleOriginalLinkClick}
+              className="flex items-center space-x-1 text-slate-400 hover:text-white transition-colors text-sm"
+            >
+              <Link className="h-3 w-3" />
+              <span>原文链接</span>
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );
