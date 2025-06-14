@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { useNews } from "@/hooks/useNews";
 import NewsCard from "./NewsCard";
 import NewsModal from "./NewsModal";
+import { AlertCircle } from "lucide-react";
 
 interface NewsListProps {
   selectedCategory: string;
 }
 
 const NewsList = ({ selectedCategory }: NewsListProps) => {
-  const { news, loading, getNewsByCategory, getNewsById } = useNews();
+  const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing } = useNews();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +19,6 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
   const selectedNews = selectedNewsId ? getNewsById(selectedNewsId) : null;
 
   useEffect(() => {
-    // 每秒更新当前时间
     const interval = setInterval(() => {
       setCurrentDate(new Date());
     }, 1000);
@@ -90,6 +90,16 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
         </div>
       </div>
 
+      {apiKeyMissing && (
+        <div className="mb-6 p-4 bg-yellow-900/50 border border-yellow-600/50 rounded-lg flex items-center space-x-3">
+          <AlertCircle className="h-5 w-5 text-yellow-400 flex-shrink-0" />
+          <div className="text-yellow-200 text-sm">
+            <p className="font-medium">正在使用演示数据</p>
+            <p>要获取实时新闻，请在 src/services/newsApi.ts 中添加有效的 NewsAPI 密钥</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredNews.map((article) => (
           <NewsCard
@@ -106,6 +116,12 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
           />
         ))}
       </div>
+
+      {filteredNews.length === 0 && !loading && (
+        <div className="text-center text-slate-400 py-12">
+          <p>暂无 {selectedCategory} 相关新闻</p>
+        </div>
+      )}
 
       <NewsModal
         news={selectedNews}

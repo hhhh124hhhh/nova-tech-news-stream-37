@@ -11,7 +11,7 @@ interface HeaderProps {
 const Header = ({ onCategoryChange, selectedCategory }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const categories = ["全部", "AI智能体", "AI视频", "AI绘画", "大语言模型", "机器学习"];
+  const categories = ["全部", "国际AI", "国内AI", "AI智能体", "AI视频", "AI绘画", "大语言模型"];
 
   return (
     <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
@@ -27,11 +27,11 @@ const Header = ({ onCategoryChange, selectedCategory }: HeaderProps) => {
           <div className="hidden md:flex items-center space-x-6">
             <SearchBar />
             <nav className="flex space-x-6">
-              {categories.slice(0, 4).map((category) => (
+              {categories.slice(0, 5).map((category) => (
                 <button
                   key={category}
                   onClick={() => onCategoryChange(category)}
-                  className={`transition-colors duration-200 font-medium ${
+                  className={`transition-colors duration-200 font-medium whitespace-nowrap ${
                     selectedCategory === category
                       ? 'text-blue-400 border-b-2 border-blue-400'
                       : 'text-slate-300 hover:text-white'
