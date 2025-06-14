@@ -1,75 +1,177 @@
 
 import { useState } from "react";
-import { Menu, X, Newspaper } from "lucide-react";
+import { Menu, X, Newspaper, Globe, ChevronDown } from "lucide-react";
 import SearchBar from "./SearchBar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   onCategoryChange: (category: string) => void;
   selectedCategory: string;
+  onLanguageChange: (language: string) => void;
+  selectedLanguage: string;
 }
 
-const Header = ({ onCategoryChange, selectedCategory }: HeaderProps) => {
+const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selectedLanguage }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const categories = ["全部", "国际AI", "国内AI", "AI智能体", "AI视频", "AI绘画", "大语言模型"];
+  const categories = ["全部", "人工智能", "机器学习", "深度学习", "自然语言处理", "计算机视觉"];
+  const languages = [
+    { code: "zh", name: "中文", flag: "🇨🇳" },
+    { code: "en", name: "English", flag: "🇺🇸" },
+    { code: "ja", name: "日本語", flag: "🇯🇵" },
+    { code: "ko", name: "한국어", flag: "🇰🇷" }
+  ];
+
+  const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
 
   return (
-    <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
+    <header className="bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50 shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
+          {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+            <div className="p-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg shadow-lg">
               <Newspaper className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">AI News Hub</span>
+            <div className="flex flex-col">
+              <span className="text-xl font-bold text-white">AI News Hub</span>
+              <span className="text-xs text-slate-400 hidden sm:block">智能资讯聚合平台</span>
+            </div>
           </div>
 
-          <div className="hidden md:flex items-center space-x-6">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-6">
             <SearchBar />
-            <nav className="flex space-x-6">
-              {categories.slice(0, 5).map((category) => (
-                <button
+            
+            {/* Categories */}
+            <nav className="flex space-x-1">
+              {categories.slice(0, 4).map((category) => (
+                <Button
                   key={category}
                   onClick={() => onCategoryChange(category)}
-                  className={`transition-colors duration-200 font-medium whitespace-nowrap ${
+                  variant={selectedCategory === category ? "default" : "ghost"}
+                  size="sm"
+                  className={`transition-all duration-200 ${
                     selectedCategory === category
-                      ? 'text-blue-400 border-b-2 border-blue-400'
-                      : 'text-slate-300 hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
                   }`}
                 >
                   {category}
-                </button>
+                </Button>
               ))}
+              
+              {/* More Categories Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800">
+                    更多 <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-slate-800 border-slate-700">
+                  {categories.slice(4).map((category) => (
+                    <DropdownMenuItem
+                      key={category}
+                      onClick={() => onCategoryChange(category)}
+                      className="text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer"
+                    >
+                      {category}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </nav>
+
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
+                  <Globe className="h-4 w-4 mr-2" />
+                  <span className="mr-1">{currentLanguage.flag}</span>
+                  <span className="hidden sm:inline">{currentLanguage.name}</span>
+                  <ChevronDown className="ml-1 h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-slate-800 border-slate-700">
+                {languages.map((language) => (
+                  <DropdownMenuItem
+                    key={language.code}
+                    onClick={() => onLanguageChange(language.code)}
+                    className="text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer"
+                  >
+                    <span className="mr-2">{language.flag}</span>
+                    {language.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
+          {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-white"
+            className="lg:hidden text-white p-2 hover:bg-slate-800 rounded-lg transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-700/50">
+          <div className="lg:hidden py-4 border-t border-slate-700/50 space-y-4">
             <SearchBar />
-            <nav className="flex flex-col space-y-3 mt-4">
+            
+            {/* Mobile Language Selector */}
+            <div className="flex items-center justify-between">
+              <span className="text-slate-300 text-sm font-medium">语言选择</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="bg-slate-800 border-slate-600 text-slate-300">
+                    <span className="mr-2">{currentLanguage.flag}</span>
+                    {currentLanguage.name}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-slate-800 border-slate-700">
+                  {languages.map((language) => (
+                    <DropdownMenuItem
+                      key={language.code}
+                      onClick={() => onLanguageChange(language.code)}
+                      className="text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer"
+                    >
+                      <span className="mr-2">{language.flag}</span>
+                      {language.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Mobile Categories */}
+            <nav className="grid grid-cols-2 gap-2">
               {categories.map((category) => (
-                <button
+                <Button
                   key={category}
                   onClick={() => {
                     onCategoryChange(category);
                     setIsMenuOpen(false);
                   }}
-                  className={`transition-colors duration-200 font-medium text-left ${
+                  variant={selectedCategory === category ? "default" : "ghost"}
+                  size="sm"
+                  className={`justify-start ${
                     selectedCategory === category
-                      ? 'text-blue-400'
-                      : 'text-slate-300 hover:text-white'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
                   }`}
                 >
                   {category}
-                </button>
+                </Button>
               ))}
             </nav>
           </div>

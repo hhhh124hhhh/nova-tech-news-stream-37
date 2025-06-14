@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
-import { fetchInternationalAINews, fetchDomesticAINews, fetchCategoryNews, NewsItem } from "@/services/newsApi";
+import { fetchAINews, NewsItem } from "@/services/newsApi";
+import { translateNewsItem } from "@/services/translationApi";
 
 // 扩展的模拟数据
 const mockNews: NewsItem[] = [
@@ -80,8 +80,10 @@ const mockNews: NewsItem[] = [
 
 export const useNews = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [translatedNews, setTranslatedNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiKeyMissing, setApiKeyMissing] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('zh');
 
   useEffect(() => {
     const fetchAllNews = async () => {
@@ -89,34 +91,15 @@ export const useNews = () => {
       try {
         console.log('开始获取AI新闻数据...');
         
-        // 并行获取所有类型的新闻
-        const [internationalNews, domesticNews, agentNews, videoNews, artNews, llmNews] = await Promise.all([
-          fetchInternationalAINews(),
-          fetchDomesticAINews(),
-          fetchCategoryNews('AI智能体'),
-          fetchCategoryNews('AI视频'),
-          fetchCategoryNews('AI绘画'),
-          fetchCategoryNews('大语言模型')
-        ]);
-
-        const allNews = [
-          ...internationalNews,
-          ...domesticNews,
-          ...agentNews,
-          ...videoNews,
-          ...artNews,
-          ...llmNews
-        ];
+        const allNews = await fetchAINews();
 
         console.log(`获取到 ${allNews.length} 条新闻`);
 
         if (allNews.length === 0) {
-          // 如果API调用失败，使用模拟数据
           console.log('API调用失败，使用模拟数据');
           setNews(mockNews);
           setApiKeyMissing(true);
         } else {
-          // 按发布时间排序
           const sortedNews = allNews.sort((a, b) => 
             new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
           );
@@ -134,7 +117,6 @@ export const useNews = () => {
 
     fetchAllNews();
 
-    // 每30分钟更新一次新闻
     const interval = setInterval(() => {
       console.log("正在更新最新AI新闻数据...");
       fetchAllNews();
@@ -143,16 +125,55 @@ export const useNews = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // 语言切换效果
+  useEffect(() => {
+    const translateNews = async () => {
+      if (currentLanguage === 'zh') {
+        setTranslatedNews(news);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const translated = await Promise.all(
+          news.map(item => translateNewsItem(item, currentLanguage))
+        );
+        setTranslatedNews(translated);
+      } catch (error) {
+        console.error('翻译新闻时出错:', error);
+        setTranslatedNews(news);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    translateNews();
+  }, [news, currentLanguage]);
+
   const getNewsByCategory = (category: string) => {
-    if (category === "全部") {
-      return news;
+    const newsToFilter = translatedNews.length > 0 ? translatedNews : news;
+    if (category === "全部" || category === "All" || category === "すべて" || category === "전체") {
+      return newsToFilter;
     }
-    return news.filter(item => item.category === category);
+    return newsToFilter.filter(item => item.category === category);
   };
 
   const getNewsById = (id: string) => {
-    return news.find(item => item.id === id);
+    const newsToSearch = translatedNews.length > 0 ? translatedNews : news;
+    return newsToSearch.find(item => item.id === id);
   };
 
-  return { news, loading, getNewsByCategory, getNewsById, apiKeyMissing };
+  const changeLanguage = (language: string) => {
+    setCurrentLanguage(language);
+  };
+
+  return { 
+    news: translatedNews.length > 0 ? translatedNews : news, 
+    loading, 
+    getNewsByCategory, 
+    getNewsById, 
+    apiKeyMissing,
+    changeLanguage,
+    currentLanguage
+  };
 };
