@@ -15,63 +15,63 @@ interface NewsItem {
 const mockNews: NewsItem[] = [
   {
     id: "1",
-    title: "OpenAI发布GPT-5：多模态AI的新突破",
-    summary: "OpenAI最新发布的GPT-5模型在多模态理解和推理能力上取得了显著突破，能够同时处理文本、图像、音频和视频内容，为AI应用开辟了全新的可能性。",
-    author: "李明",
-    publishDate: "2024-01-15",
-    category: "自然语言处理",
+    title: "ChatGPT推出GPT-4o：实时语音对话功能震撼发布",
+    summary: "OpenAI最新发布的GPT-4o模型支持实时语音对话，能够理解语调和情感，响应速度大幅提升，为AI交互体验带来革命性变化。",
+    author: "AI前沿",
+    publishDate: "2024-06-14",
+    category: "AI智能体",
     imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
-    readTime: "5分钟"
+    readTime: "3分钟"
   },
   {
     id: "2",
-    title: "谷歌DeepMind在蛋白质折叠预测领域再创新高",
-    summary: "DeepMind团队最新研究成果显示，AlphaFold3在蛋白质结构预测准确性上又有新的提升，这一突破将加速药物发现和生物医学研究的进展。",
-    author: "王芳",
-    publishDate: "2024-01-14",
-    category: "机器学习",
-    imageUrl: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80",
-    readTime: "7分钟"
-  },
-  {
-    id: "3",
-    title: "特斯拉机器人Optimus最新进展：人形机器人的工业化应用",
-    summary: "特斯拉展示了Optimus机器人的最新功能，包括更精准的物体操控和复杂任务执行能力，标志着人形机器人向工业化应用又迈进了一步。",
-    author: "张伟",
-    publishDate: "2024-01-13",
-    category: "机器人技术",
-    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
-    readTime: "6分钟"
-  },
-  {
-    id: "4",
-    title: "Meta发布全新AR眼镜：增强现实技术的重大突破",
-    summary: "Meta推出的新一代AR眼镜在视觉效果、续航能力和用户交互方面都有显著改进，为增强现实技术的普及奠定了基础。",
-    author: "陈丽",
-    publishDate: "2024-01-12",
-    category: "计算机视觉",
-    imageUrl: "https://images.unsplash.com/photo-1617802690992-15d93263d3a9?auto=format&fit=crop&w=800&q=80",
+    title: "Runway Gen-3 Alpha发布：AI视频生成达到新高度",
+    summary: "Runway推出的Gen-3 Alpha模型在视频生成质量和一致性方面取得重大突破，支持高分辨率视频生成和复杂场景渲染。",
+    author: "视频AI研究",
+    publishDate: "2024-06-14",
+    category: "AI视频",
+    imageUrl: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80",
     readTime: "4分钟"
   },
   {
+    id: "3",
+    title: "Midjourney V6发布：AI绘画进入超现实主义时代",
+    summary: "Midjourney V6版本在图像质量、细节表现和风格控制方面实现重大升级，支持更复杂的提示词和更精准的艺术风格模拟。",
+    author: "数字艺术家",
+    publishDate: "2024-06-13",
+    category: "AI绘画",
+    imageUrl: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80",
+    readTime: "5分钟"
+  },
+  {
+    id: "4",
+    title: "Claude 3.5 Sonnet：Anthropic发布最强推理模型",
+    summary: "Anthropic发布的Claude 3.5 Sonnet在代码生成、数学推理和创意写作方面表现卓越，在多项基准测试中超越GPT-4。",
+    author: "AI评测专家",
+    publishDate: "2024-06-12",
+    category: "大语言模型",
+    imageUrl: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=800&q=80",
+    readTime: "6分钟"
+  },
+  {
     id: "5",
-    title: "百度Apollo自动驾驶技术在北京开启商业化运营",
-    summary: "百度Apollo无人驾驶出租车服务在北京正式启动商业化运营，这标志着自动驾驶技术从测试阶段向实际应用的重要转变。",
-    author: "刘强",
-    publishDate: "2024-01-11",
-    category: "深度学习",
-    imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80",
-    readTime: "8分钟"
+    title: "谷歌推出Gemini 1.5 Pro：支持200万token上下文",
+    summary: "谷歌最新发布的Gemini 1.5 Pro模型支持高达200万token的上下文长度，能够处理超长文档和复杂推理任务。",
+    author: "谷歌AI团队",
+    publishDate: "2024-06-11",
+    category: "大语言模型",
+    imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+    readTime: "7分钟"
   },
   {
     id: "6",
-    title: "微软Azure AI推出新的企业级AI解决方案",
-    summary: "微软Azure AI平台发布了一系列企业级AI工具和服务，帮助企业更轻松地集成和部署人工智能应用，推动AI技术在商业领域的广泛应用。",
-    author: "赵敏",
-    publishDate: "2024-01-10",
-    category: "机器学习",
-    imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-    readTime: "6分钟"
+    title: "Stability AI发布SDXL Turbo：实时AI图像生成",
+    summary: "Stability AI推出SDXL Turbo模型，实现单步图像生成，大幅提升AI绘画速度，为实时创作应用开辟新可能。",
+    author: "Stability研究院",
+    publishDate: "2024-06-10",
+    category: "AI绘画",
+    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+    readTime: "4分钟"
   }
 ];
 
@@ -92,7 +92,7 @@ export const useNews = () => {
 
     // 模拟实时更新
     const interval = setInterval(() => {
-      console.log("正在更新新闻数据...");
+      console.log("正在更新最新AI新闻数据...");
     }, 30000);
 
     return () => clearInterval(interval);

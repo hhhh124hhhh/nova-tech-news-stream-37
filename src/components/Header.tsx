@@ -6,7 +6,7 @@ import SearchBar from "./SearchBar";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const categories = ["全部", "机器学习", "深度学习", "计算机视觉", "自然语言处理", "机器人技术"];
+  const categories = ["全部", "AI智能体", "AI视频", "AI绘画", "大语言模型", "机器学习"];
 
   return (
     <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
