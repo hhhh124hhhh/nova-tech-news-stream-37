@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { fetchAINews, NewsItem } from "@/services/newsApi";
 import { translateNewsItem } from "@/services/translationApi";
 
-// 更新为AI大模型相关的模拟数据
+// 更新为AI大模型相关的模拟数据，包含新的分类
 const mockNews: NewsItem[] = [
   {
     id: "mock-1",
@@ -19,51 +19,51 @@ const mockNews: NewsItem[] = [
   },
   {
     id: "mock-2", 
-    title: "Claude 3.5升级：Anthropic推出Constitutional AI 2.0",
-    summary: "Anthropic发布Claude 3.5的重大更新，引入Constitutional AI 2.0技术，大幅提升模型的安全性和可控性。",
-    content: "Anthropic公司发布了Claude 3.5的重要升级版本，核心亮点是全新的Constitutional AI 2.0技术。这项技术通过更精细的价值对齐训练，使Claude 3.5在保持强大能力的同时，展现出更高的安全性和可控性。新版本在处理敏感话题、避免有害输出和遵循用户意图方面都有显著改进。",
-    author: "Anthropic团队",
+    title: "Midjourney V6发布：AI绘画进入新纪元",
+    summary: "Midjourney V6版本正式发布，在图像质量、细节处理和创意表现方面实现了革命性突破。",
+    content: "Midjourney V6版本的发布标志着AI绘画技术进入了一个全新的时代。新版本在图像分辨率、色彩表现、细节处理等方面都有显著提升。特别是在人物面部表情、手部细节、光影效果等传统AI绘画难点上实现了重大突破。V6还增加了更强的风格控制能力，用户可以更精确地控制生成图像的艺术风格和视觉效果。",
+    author: "Midjourney团队",
     publishDate: new Date(Date.now() - 86400000).toLocaleDateString('zh-CN'),
-    category: "大语言模型",
-    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
+    category: "AI绘画",
+    imageUrl: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80",
     readTime: "3分钟",
-    source: "Anthropic"
+    source: "Midjourney"
   },
   {
     id: "mock-3",
-    title: "Google Gemini Ultra发布：多模态AI的新标杆",
-    summary: "Google发布Gemini Ultra模型，在多模态AI能力评测中全面超越GPT-4，标志着AI大模型进入新时代。",
-    content: "Google发布了备受期待的Gemini Ultra模型，这是该公司迄今为止最强大的多模态AI系统。Gemini Ultra在32项学术基准测试中有30项超越了GPT-4，特别是在数学推理、代码生成和多模态理解方面表现卓越。该模型原生支持文本、图像、音频和视频的处理，为多模态AI应用开辟了新的可能性。",
-    author: "Google DeepMind",
+    title: "OpenAI Sora震撼发布：文本生成视频的革命",
+    summary: "OpenAI发布Sora模型，能够根据文本描述生成高质量的60秒视频，引发AI视频生成领域的巨大变革。",
+    content: "OpenAI最新发布的Sora模型在AI视频生成领域实现了前所未有的突破。Sora能够根据用户的文本描述生成长达60秒的高质量视频，视频具有复杂的场景、多个角色和精确的物理运动。该模型展现出了对现实世界物理规律的深度理解，生成的视频在连贯性、真实感和创意表现方面都达到了令人惊叹的水平。",
+    author: "OpenAI",
     publishDate: new Date(Date.now() - 172800000).toLocaleDateString('zh-CN'),
-    category: "多模态AI",
-    imageUrl: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80",
+    category: "AI视频",
+    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
     readTime: "5分钟",
-    source: "Google"
+    source: "OpenAI"
   },
   {
     id: "mock-4",
+    title: "GitHub Copilot X：AI编程助手的全面升级",
+    summary: "GitHub发布Copilot X，集成GPT-4技术，为开发者提供更智能的编程辅助体验。",
+    content: "GitHub Copilot X是基于GPT-4技术的全新AI编程助手，相比前代产品在代码理解、生成质量和上下文感知方面都有显著提升。Copilot X不仅能够生成高质量的代码片段，还能理解复杂的项目结构，提供智能的重构建议，甚至能够协助进行代码审查和bug修复。这一工具的发布将极大提升开发者的工作效率。",
+    author: "GitHub",
+    publishDate: new Date(Date.now() - 259200000).toLocaleDateString('zh-CN'),
+    category: "AI编程",
+    imageUrl: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=800&q=80",
+    readTime: "4分钟",
+    source: "GitHub"
+  },
+  {
+    id: "mock-5",
     title: "AutoGPT 2.0：下一代AI智能体架构发布",
     summary: "AutoGPT团队发布2.0版本，引入全新的智能体架构，支持长期记忆和复杂任务规划。",
     content: "AutoGPT 2.0正式发布，这是AI智能体领域的一个重要里程碑。新版本采用了革命性的架构设计，包括持久化记忆系统、高级任务规划器和自适应学习机制。AutoGPT 2.0能够处理跨越数天甚至数周的复杂项目，自主学习新技能，并与多种工具和服务集成，真正实现了智能体的自主性和实用性。",
     author: "AutoGPT团队",
-    publishDate: new Date(Date.now() - 259200000).toLocaleDateString('zh-CN'),
-    category: "AI智能体",
-    imageUrl: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=800&q=80",
-    readTime: "4分钟",
-    source: "AutoGPT"
-  },
-  {
-    id: "mock-5",
-    title: "百度文心大模型4.0：中文理解新突破",
-    summary: "百度发布文心大模型4.0，在中文语言理解和生成方面实现重大突破，性能全面超越国外同类产品。",
-    content: "百度正式发布文心大模型4.0，这是专门针对中文优化的大语言模型。新版本在中文语言理解、古诗词创作、文学分析和中国文化相关问题解答方面表现卓越。文心4.0还特别加强了对中国法律、历史、文化的理解，能够处理复杂的中文语境和文化背景，为中文AI应用提供了强有力的技术支撑。",
-    author: "百度AI",
     publishDate: new Date(Date.now() - 345600000).toLocaleDateString('zh-CN'),
-    category: "大语言模型",
+    category: "AI智能体",
     imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
     readTime: "3分钟",
-    source: "百度"
+    source: "AutoGPT"
   },
   {
     id: "mock-6",
@@ -134,11 +134,17 @@ export const useNews = () => {
         return;
       }
 
+      if (news.length === 0) {
+        return;
+      }
+
       setLoading(true);
       try {
+        console.log(`正在翻译新闻到${currentLanguage}...`);
         const translated = await Promise.all(
           news.map(item => translateNewsItem(item, currentLanguage))
         );
+        console.log(`翻译完成，共${translated.length}条新闻`);
         setTranslatedNews(translated);
       } catch (error) {
         console.error('翻译新闻时出错:', error);
@@ -152,7 +158,7 @@ export const useNews = () => {
   }, [news, currentLanguage]);
 
   const getNewsByCategory = (category: string) => {
-    const newsToFilter = translatedNews.length > 0 ? translatedNews : news;
+    const newsToFilter = currentLanguage === 'zh' ? news : translatedNews;
     if (category === "全部" || category === "All" || category === "すべて" || category === "전체") {
       return newsToFilter;
     }
@@ -160,16 +166,17 @@ export const useNews = () => {
   };
 
   const getNewsById = (id: string) => {
-    const newsToSearch = translatedNews.length > 0 ? translatedNews : news;
+    const newsToSearch = currentLanguage === 'zh' ? news : translatedNews;
     return newsToSearch.find(item => item.id === id);
   };
 
   const changeLanguage = (language: string) => {
+    console.log(`切换语言到: ${language}`);
     setCurrentLanguage(language);
   };
 
   return { 
-    news: translatedNews.length > 0 ? translatedNews : news, 
+    news: currentLanguage === 'zh' ? news : translatedNews, 
     loading, 
     getNewsByCategory, 
     getNewsById, 
@@ -178,4 +185,3 @@ export const useNews = () => {
     currentLanguage
   };
 };
-

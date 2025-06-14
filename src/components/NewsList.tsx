@@ -10,7 +10,7 @@ interface NewsListProps {
 }
 
 const NewsList = ({ selectedCategory }: NewsListProps) => {
-  const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing } = useNews();
+  const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing, currentLanguage } = useNews();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +47,59 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
     setSelectedNewsId(null);
   };
 
+  const getListTitle = () => {
+    const isAllCategory = selectedCategory === "全部" || selectedCategory === "All" || selectedCategory === "すべて" || selectedCategory === "전체";
+    
+    if (isAllCategory) {
+      if (currentLanguage === 'en') return "Latest News";
+      if (currentLanguage === 'ja') return "最新ニュース";
+      if (currentLanguage === 'ko') return "최신 뉴스";
+      return "最新资讯";
+    }
+    
+    return selectedCategory;
+  };
+
+  const getCurrentTimeLabel = () => {
+    if (currentLanguage === 'en') return "Current Time";
+    if (currentLanguage === 'ja') return "現在時刻";
+    if (currentLanguage === 'ko') return "현재 시간";
+    return "当前时间";
+  };
+
+  const getLiveUpdateLabel = () => {
+    if (currentLanguage === 'en') return "Live Updates";
+    if (currentLanguage === 'ja') return "リアルタイム更新";
+    if (currentLanguage === 'ko') return "실시간 업데이트";
+    return "实时更新";
+  };
+
+  const getDemoDataMessage = () => {
+    if (currentLanguage === 'en') return {
+      title: "Using Demo Data",
+      description: "To get real-time news, please add a valid NewsAPI key in src/services/newsApi.ts"
+    };
+    if (currentLanguage === 'ja') return {
+      title: "デモデータを使用中",
+      description: "リアルタイムニュースを取得するには、src/services/newsApi.tsに有効なNewsAPIキーを追加してください"
+    };
+    if (currentLanguage === 'ko') return {
+      title: "데모 데이터 사용 중",
+      description: "실시간 뉴스를 얻으려면 src/services/newsApi.ts에 유효한 NewsAPI 키를 추가하세요"
+    };
+    return {
+      title: "正在使用演示数据",
+      description: "要获取实时新闻，请在 src/services/newsApi.ts 中添加有效的 NewsAPI 密钥"
+    };
+  };
+
+  const getNoNewsMessage = () => {
+    if (currentLanguage === 'en') return `No ${selectedCategory} related news available`;
+    if (currentLanguage === 'ja') return `${selectedCategory}関連のニュースはありません`;
+    if (currentLanguage === 'ko') return `${selectedCategory} 관련 뉴스가 없습니다`;
+    return `暂无 ${selectedCategory} 相关新闻`;
+  };
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -73,19 +126,21 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
     );
   }
 
+  const demoMessage = getDemoDataMessage();
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-white">
-          {selectedCategory === "全部" ? "最新资讯" : selectedCategory}
+          {getListTitle()}
         </h2>
         <div className="flex items-center space-x-4">
           <div className="text-slate-300 text-sm">
-            当前时间: <span className="text-blue-400 font-mono">{formatDate(currentDate)}</span>
+            {getCurrentTimeLabel()}: <span className="text-blue-400 font-mono">{formatDate(currentDate)}</span>
           </div>
           <div className="flex items-center space-x-2 text-green-400">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium">实时更新</span>
+            <span className="text-sm font-medium">{getLiveUpdateLabel()}</span>
           </div>
         </div>
       </div>
@@ -94,8 +149,8 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
         <div className="mb-6 p-4 bg-yellow-900/50 border border-yellow-600/50 rounded-lg flex items-center space-x-3">
           <AlertCircle className="h-5 w-5 text-yellow-400 flex-shrink-0" />
           <div className="text-yellow-200 text-sm">
-            <p className="font-medium">正在使用演示数据</p>
-            <p>要获取实时新闻，请在 src/services/newsApi.ts 中添加有效的 NewsAPI 密钥</p>
+            <p className="font-medium">{demoMessage.title}</p>
+            <p>{demoMessage.description}</p>
           </div>
         </div>
       )}
@@ -119,7 +174,7 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
 
       {filteredNews.length === 0 && !loading && (
         <div className="text-center text-slate-400 py-12">
-          <p>暂无 {selectedCategory} 相关新闻</p>
+          <p>{getNoNewsMessage()}</p>
         </div>
       )}
 

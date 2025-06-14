@@ -35,6 +35,9 @@ export const translateText = async (text: string, targetLang: string): Promise<s
       'AI训练技术': 'AI Training Technology',
       'AI应用产品': 'AI Applications & Products',
       'AI行业动态': 'AI Industry News',
+      'AI绘画': 'AI Art Generation',
+      'AI视频': 'AI Video',
+      'AI编程': 'AI Programming',
       '全部': 'All',
       '最新资讯': 'Latest News',
       '当前时间': 'Current Time',
@@ -47,7 +50,12 @@ export const translateText = async (text: string, targetLang: string): Promise<s
       '深度学习': 'Deep Learning',
       '自然语言处理': 'Natural Language Processing',
       '神经网络': 'Neural Networks',
-      '算法优化': 'Algorithm Optimization'
+      '算法优化': 'Algorithm Optimization',
+      '计算机视觉': 'Computer Vision',
+      '图像生成': 'Image Generation',
+      '视频生成': 'Video Generation',
+      '代码生成': 'Code Generation',
+      '自动编程': 'Automated Programming'
     };
     
     for (const [chinese, english] of Object.entries(translations)) {
@@ -61,6 +69,9 @@ export const translateText = async (text: string, targetLang: string): Promise<s
       'AI训练技术': 'AI訓練技術',
       'AI应用产品': 'AIアプリケーション・製品',
       'AI行业动态': 'AI業界ニュース',
+      'AI绘画': 'AI画像生成',
+      'AI视频': 'AI動画',
+      'AI编程': 'AIプログラミング',
       '全部': 'すべて',
       '最新资讯': '最新ニュース',
       '当前时间': '現在時刻',
@@ -70,7 +81,12 @@ export const translateText = async (text: string, targetLang: string): Promise<s
       '分钟': '分',
       '人工智能': '人工知能',
       '机器学习': '機械学習',
-      '深度学习': 'ディープラーニング'
+      '深度学习': 'ディープラーニング',
+      '计算机视觉': 'コンピュータビジョン',
+      '图像生成': '画像生成',
+      '视频生成': '動画生成',
+      '代码生成': 'コード生成',
+      '自动编程': '自動プログラミング'
     };
     
     for (const [chinese, japanese] of Object.entries(translations)) {
@@ -84,6 +100,9 @@ export const translateText = async (text: string, targetLang: string): Promise<s
       'AI训练技术': 'AI 훈련 기술',
       'AI应用产品': 'AI 애플리케이션 및 제품',
       'AI行业动态': 'AI 업계 뉴스',
+      'AI绘画': 'AI 그림 생성',
+      'AI视频': 'AI 비디오',
+      'AI编程': 'AI 프로그래밍',
       '全部': '전체',
       '最新资讯': '최신 뉴스',
       '当前时间': '현재 시간',
@@ -93,7 +112,12 @@ export const translateText = async (text: string, targetLang: string): Promise<s
       '分钟': '분',
       '人工智能': '인공지능',
       '机器学习': '머신러닝',
-      '深度学习': '딥러닝'
+      '深度学习': '딥러닝',
+      '计算机视觉': '컴퓨터 비전',
+      '图像生成': '이미지 생성',
+      '视频生成': '비디오 생성',
+      '代码生成': '코드 생성',
+      '自动编程': '자동 프로그래밍'
     };
     
     for (const [chinese, korean] of Object.entries(translations)) {
@@ -129,4 +153,3 @@ export const translateNewsItem = async (newsItem: any, targetLang: string) => {
     category: translatedCategory
   };
 };
-
