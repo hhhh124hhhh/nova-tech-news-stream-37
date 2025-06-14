@@ -33,13 +33,13 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            AI News Hub
+            AI大模型资讯中心
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            {currentLanguage === 'zh' && '探索人工智能的最新发展，获取前沿科技资讯和深度分析'}
-            {currentLanguage === 'en' && 'Explore the latest developments in artificial intelligence and get cutting-edge technology insights'}
-            {currentLanguage === 'ja' && '人工知能の最新動向を探り、最先端技術の洞察と詳細な分析を入手'}
-            {currentLanguage === 'ko' && '인공지능의 최신 발전을 탐구하고 최첨단 기술 인사이트와 심층 분석을 얻으세요'}
+            {currentLanguage === 'zh' && '专注于大语言模型、AI智能体、多模态AI等前沿技术的最新发展动态'}
+            {currentLanguage === 'en' && 'Focus on the latest developments in large language models, AI agents, multimodal AI and cutting-edge technologies'}
+            {currentLanguage === 'ja' && '大規模言語モデル、AIエージェント、マルチモーダルAIなど最先端技術の最新動向に焦点'}
+            {currentLanguage === 'ko' && '대규모 언어 모델, AI 에이전트, 멀티모달 AI 등 최첨단 기술의 최신 동향에 집중'}
           </p>
         </div>
         <NewsList selectedCategory={selectedCategory} />
@@ -49,3 +49,4 @@ const Index = () => {
 };
 
 export default Index;
+

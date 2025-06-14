@@ -1,4 +1,5 @@
 
+
 export interface NewsApiArticle {
   title: string;
   description: string;
@@ -40,42 +41,60 @@ interface GuardianArticle {
   sectionName: string;
 }
 
-// 重新定义分类映射，基于内容而非固定分类
+// 专注于AI大模型的分类映射
 const getCategoryFromContent = (title: string, content: string): string => {
   const text = `${title} ${content}`.toLowerCase();
   
-  // AI智能体相关关键词
-  if (text.includes('agent') || text.includes('assistant') || text.includes('chatbot') || 
-      text.includes('智能体') || text.includes('助手') || text.includes('机器人')) {
+  // 大语言模型相关关键词 - 最高优先级
+  if (text.includes('gpt') || text.includes('claude') || text.includes('llm') || 
+      text.includes('large language model') || text.includes('chatgpt') || 
+      text.includes('openai') || text.includes('anthropic') || text.includes('gemini') ||
+      text.includes('文心一言') || text.includes('通义千问') || text.includes('大语言模型') ||
+      text.includes('智谱') || text.includes('moonshot') || text.includes('kimi')) {
+    return '大语言模型';
+  }
+  
+  // AI智能体相关
+  if (text.includes('agent') || text.includes('assistant') || text.includes('copilot') || 
+      text.includes('智能体') || text.includes('助手') || text.includes('自动化') ||
+      text.includes('workflow') || text.includes('autogpt')) {
     return 'AI智能体';
   }
   
-  // 计算机视觉相关
-  if (text.includes('vision') || text.includes('image') || text.includes('visual') || 
-      text.includes('视觉') || text.includes('图像') || text.includes('视频')) {
-    return '计算机视觉';
+  // 多模态AI相关
+  if (text.includes('multimodal') || text.includes('vision') || text.includes('image') || 
+      text.includes('video') || text.includes('audio') || text.includes('speech') ||
+      text.includes('多模态') || text.includes('视觉') || text.includes('图像') || 
+      text.includes('视频') || text.includes('语音') || text.includes('dall-e') ||
+      text.includes('midjourney') || text.includes('suno') || text.includes('runway')) {
+    return '多模态AI';
   }
   
-  // 自然语言处理相关
-  if (text.includes('language') || text.includes('nlp') || text.includes('text') || 
-      text.includes('语言') || text.includes('文本') || text.includes('对话')) {
-    return '自然语言处理';
+  // AI训练与技术相关
+  if (text.includes('training') || text.includes('fine-tuning') || text.includes('rlhf') || 
+      text.includes('reinforcement learning') || text.includes('neural network') ||
+      text.includes('transformer') || text.includes('训练') || text.includes('微调') ||
+      text.includes('神经网络') || text.includes('算法') || text.includes('模型架构')) {
+    return 'AI训练技术';
   }
   
-  // 机器学习相关
-  if (text.includes('machine learning') || text.includes('ml') || text.includes('model') || 
-      text.includes('机器学习') || text.includes('模型') || text.includes('训练')) {
-    return '机器学习';
+  // AI应用与产品相关
+  if (text.includes('application') || text.includes('product') || text.includes('service') || 
+      text.includes('应用') || text.includes('产品') || text.includes('服务') ||
+      text.includes('commercial') || text.includes('business') || text.includes('startup')) {
+    return 'AI应用产品';
   }
   
-  // 深度学习相关
-  if (text.includes('deep learning') || text.includes('neural') || text.includes('深度学习') || 
-      text.includes('神经') || text.includes('网络')) {
-    return '深度学习';
+  // AI行业动态相关
+  if (text.includes('funding') || text.includes('investment') || text.includes('acquisition') || 
+      text.includes('partnership') || text.includes('collaboration') || text.includes('融资') ||
+      text.includes('投资') || text.includes('收购') || text.includes('合作') ||
+      text.includes('valuation') || text.includes('ipo') || text.includes('competition')) {
+    return 'AI行业动态';
   }
   
-  // 默认为人工智能
-  return '人工智能';
+  // 默认为大语言模型
+  return '大语言模型';
 };
 
 // 将Guardian文章转换为我们的格式
@@ -99,7 +118,7 @@ const transformGuardianArticle = (article: GuardianArticle): NewsItem => {
 };
 
 // 获取Guardian API新闻
-const fetchGuardianNews = async (query: string, categoryHint?: string): Promise<NewsItem[]> => {
+const fetchGuardianNews = async (query: string): Promise<NewsItem[]> => {
   try {
     const response = await fetch(
       `https://content.guardianapis.com/search?q=${encodeURIComponent(query)}&show-fields=thumbnail,trailText,bodyText,byline&page-size=30&api-key=test`
@@ -119,25 +138,28 @@ const fetchGuardianNews = async (query: string, categoryHint?: string): Promise<
   }
 };
 
+// 主要获取AI大模型相关新闻
 export const fetchAINews = async (): Promise<NewsItem[]> => {
-  return fetchGuardianNews('artificial intelligence OR AI OR ChatGPT OR OpenAI OR machine learning OR deep learning OR neural network OR computer vision OR natural language processing');
+  return fetchGuardianNews('artificial intelligence OR AI OR "large language model" OR LLM OR ChatGPT OR GPT OR Claude OR Gemini OR "machine learning" OR "deep learning" OR OpenAI OR Anthropic OR Google AI OR "neural network" OR transformer OR "AI model"');
 };
 
 export const fetchInternationalAINews = async (): Promise<NewsItem[]> => {
-  return fetchGuardianNews('artificial intelligence OR AI OR ChatGPT OR OpenAI OR machine learning');
+  return fetchGuardianNews('OpenAI OR Anthropic OR "Google AI" OR Microsoft AI OR ChatGPT OR Claude OR Gemini OR "AI research" OR "artificial intelligence" international');
 };
 
 export const fetchDomesticAINews = async (): Promise<NewsItem[]> => {
-  // 使用中文关键词搜索国内AI新闻
-  return fetchGuardianNews('China artificial intelligence OR Baidu OR Tencent OR Alibaba AI OR Chinese AI');
+  return fetchGuardianNews('China AI OR Baidu OR Tencent OR Alibaba AI OR ByteDance OR "Chinese artificial intelligence" OR "China technology"');
 };
 
+// 根据分类获取特定新闻
 export const fetchCategoryNews = async (category: string): Promise<NewsItem[]> => {
   const categoryKeywords: Record<string, string> = {
-    'AI智能体': 'AI agent OR chatbot OR virtual assistant OR AI assistant',
-    'AI视频': 'AI video OR Runway AI OR Pika Labs OR video generation',
-    'AI绘画': 'AI art OR Midjourney OR DALL-E OR Stable Diffusion OR image generation',
-    '大语言模型': 'large language model OR LLM OR GPT OR Claude OR language model'
+    '大语言模型': 'ChatGPT OR GPT OR Claude OR Gemini OR "large language model" OR LLM OR "language model" OR OpenAI OR Anthropic',
+    'AI智能体': 'AI agent OR assistant OR copilot OR "autonomous agent" OR AutoGPT OR "AI automation"',
+    '多模态AI': 'multimodal AI OR "computer vision" OR "image generation" OR "video AI" OR DALL-E OR Midjourney OR Suno',
+    'AI训练技术': 'AI training OR "machine learning" OR "neural network" OR transformer OR "fine-tuning" OR RLHF',
+    'AI应用产品': 'AI application OR "AI product" OR "AI service" OR "AI startup" OR "commercial AI"',
+    'AI行业动态': 'AI funding OR "AI investment" OR "AI acquisition" OR "AI partnership" OR "AI market"'
   };
 
   const keywords = categoryKeywords[category];
@@ -145,3 +167,4 @@ export const fetchCategoryNews = async (category: string): Promise<NewsItem[]> =
 
   return fetchGuardianNews(keywords);
 };
+

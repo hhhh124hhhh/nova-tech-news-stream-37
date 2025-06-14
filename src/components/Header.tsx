@@ -20,7 +20,17 @@ interface HeaderProps {
 const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selectedLanguage }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const categories = ["全部", "人工智能", "机器学习", "深度学习", "自然语言处理", "计算机视觉"];
+  // 专注于AI大模型的分类
+  const categories = [
+    "全部", 
+    "大语言模型", 
+    "AI智能体", 
+    "多模态AI", 
+    "AI训练技术", 
+    "AI应用产品", 
+    "AI行业动态"
+  ];
+
   const languages = [
     { code: "zh", name: "中文", flag: "🇨🇳" },
     { code: "en", name: "English", flag: "🇺🇸" },
@@ -40,8 +50,8 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
               <Newspaper className="h-6 w-6 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-white">AI News Hub</span>
-              <span className="text-xs text-slate-400 hidden sm:block">智能资讯聚合平台</span>
+              <span className="text-xl font-bold text-white">AI大模型资讯</span>
+              <span className="text-xs text-slate-400 hidden sm:block">专业AI大语言模型新闻平台</span>
             </div>
           </div>
 
@@ -51,7 +61,7 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
             
             {/* Categories */}
             <nav className="flex space-x-1">
-              {categories.slice(0, 4).map((category) => (
+              {categories.slice(0, 3).map((category) => (
                 <Button
                   key={category}
                   onClick={() => onCategoryChange(category)}
@@ -71,11 +81,11 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800">
-                    更多 <ChevronDown className="ml-1 h-3 w-3" />
+                    更多分类 <ChevronDown className="ml-1 h-3 w-3" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-slate-800 border-slate-700">
-                  {categories.slice(4).map((category) => (
+                  {categories.slice(3).map((category) => (
                     <DropdownMenuItem
                       key={category}
                       onClick={() => onCategoryChange(category)}
@@ -164,7 +174,7 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
                   }}
                   variant={selectedCategory === category ? "default" : "ghost"}
                   size="sm"
-                  className={`justify-start ${
+                  className={`justify-start text-xs ${
                     selectedCategory === category
                       ? 'bg-blue-600 text-white'
                       : 'text-slate-300 hover:text-white hover:bg-slate-800'
@@ -182,3 +192,4 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
 };
 
 export default Header;
+

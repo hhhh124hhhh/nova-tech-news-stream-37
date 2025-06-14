@@ -8,14 +8,6 @@ export interface TranslationCache {
 // 内存中的翻译缓存
 const translationCache: TranslationCache = {};
 
-// 语言代码映射
-const languageMap: { [key: string]: string } = {
-  zh: 'zh',
-  en: 'en',
-  ja: 'ja',
-  ko: 'ko'
-};
-
 // 模拟翻译API（实际项目中可以使用Google Translate API或其他翻译服务）
 export const translateText = async (text: string, targetLang: string): Promise<string> => {
   // 如果是中文，直接返回
@@ -32,24 +24,30 @@ export const translateText = async (text: string, targetLang: string): Promise<s
   // 模拟翻译延迟
   await new Promise(resolve => setTimeout(resolve, 100));
 
-  // 简单的模拟翻译（实际项目中应该调用真实的翻译API）
+  // AI大模型相关的专业翻译
   let translatedText = text;
   
   if (targetLang === 'en') {
-    // 简单的中英对照
     const translations: { [key: string]: string } = {
-      '人工智能': 'Artificial Intelligence',
-      '机器学习': 'Machine Learning',
-      '深度学习': 'Deep Learning',
-      '自然语言处理': 'Natural Language Processing',
-      '计算机视觉': 'Computer Vision',
+      '大语言模型': 'Large Language Models',
+      'AI智能体': 'AI Agents',
+      '多模态AI': 'Multimodal AI',
+      'AI训练技术': 'AI Training Technology',
+      'AI应用产品': 'AI Applications & Products',
+      'AI行业动态': 'AI Industry News',
       '全部': 'All',
       '最新资讯': 'Latest News',
       '当前时间': 'Current Time',
       '实时更新': 'Live Updates',
       '正在使用演示数据': 'Using Demo Data',
       '阅读更多': 'Read More',
-      '分钟': 'min'
+      '分钟': 'min',
+      '人工智能': 'Artificial Intelligence',
+      '机器学习': 'Machine Learning',
+      '深度学习': 'Deep Learning',
+      '自然语言处理': 'Natural Language Processing',
+      '神经网络': 'Neural Networks',
+      '算法优化': 'Algorithm Optimization'
     };
     
     for (const [chinese, english] of Object.entries(translations)) {
@@ -57,18 +55,22 @@ export const translateText = async (text: string, targetLang: string): Promise<s
     }
   } else if (targetLang === 'ja') {
     const translations: { [key: string]: string } = {
-      '人工智能': '人工知能',
-      '机器学习': '機械学習',
-      '深度学习': 'ディープラーニング',
-      '自然语言处理': '自然言語処理',
-      '计算机视觉': 'コンピュータビジョン',
+      '大语言模型': '大規模言語モデル',
+      'AI智能体': 'AIエージェント',
+      '多模态AI': 'マルチモーダルAI',
+      'AI训练技术': 'AI訓練技術',
+      'AI应用产品': 'AIアプリケーション・製品',
+      'AI行业动态': 'AI業界ニュース',
       '全部': 'すべて',
       '最新资讯': '最新ニュース',
       '当前时间': '現在時刻',
       '实时更新': 'リアルタイム更新',
       '正在使用演示数据': 'デモデータを使用中',
       '阅读更多': '続きを読む',
-      '分钟': '分'
+      '分钟': '分',
+      '人工智能': '人工知能',
+      '机器学习': '機械学習',
+      '深度学习': 'ディープラーニング'
     };
     
     for (const [chinese, japanese] of Object.entries(translations)) {
@@ -76,18 +78,22 @@ export const translateText = async (text: string, targetLang: string): Promise<s
     }
   } else if (targetLang === 'ko') {
     const translations: { [key: string]: string } = {
-      '人工智能': '인공지능',
-      '机器学习': '머신러닝',
-      '深度学习': '딥러닝',
-      '自然语言处理': '자연어처리',
-      '计算机视觉': '컴퓨터 비전',
+      '大语言模型': '대규모 언어 모델',
+      'AI智能体': 'AI 에이전트',
+      '多模态AI': '멀티모달 AI',
+      'AI训练技术': 'AI 훈련 기술',
+      'AI应用产品': 'AI 애플리케이션 및 제품',
+      'AI行业动态': 'AI 업계 뉴스',
       '全部': '전체',
       '最新资讯': '최신 뉴스',
       '当前时间': '현재 시간',
       '实时更新': '실시간 업데이트',
       '正在使用演示数据': '데모 데이터 사용 중',
       '阅读更多': '더 읽기',
-      '分钟': '분'
+      '分钟': '분',
+      '人工智能': '인공지능',
+      '机器学习': '머신러닝',
+      '深度学习': '딥러닝'
     };
     
     for (const [chinese, korean] of Object.entries(translations)) {
@@ -123,3 +129,4 @@ export const translateNewsItem = async (newsItem: any, targetLang: string) => {
     category: translatedCategory
   };
 };
+
