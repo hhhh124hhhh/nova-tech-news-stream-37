@@ -1,3 +1,4 @@
+
 export interface NewsApiArticle {
   title: string;
   description: string;
@@ -98,7 +99,7 @@ const transformGuardianArticle = (article: GuardianArticle): NewsItem => {
 };
 
 // 获取Guardian API新闻
-const fetchGuardianNews = async (query: string): Promise<NewsItem[]> => {
+const fetchGuardianNews = async (query: string, categoryHint?: string): Promise<NewsItem[]> => {
   try {
     const response = await fetch(
       `https://content.guardianapis.com/search?q=${encodeURIComponent(query)}&show-fields=thumbnail,trailText,bodyText,byline&page-size=30&api-key=test`
@@ -123,12 +124,12 @@ export const fetchAINews = async (): Promise<NewsItem[]> => {
 };
 
 export const fetchInternationalAINews = async (): Promise<NewsItem[]> => {
-  return fetchGuardianNews('artificial intelligence OR AI OR ChatGPT OR OpenAI OR machine learning', '国际AI');
+  return fetchGuardianNews('artificial intelligence OR AI OR ChatGPT OR OpenAI OR machine learning');
 };
 
 export const fetchDomesticAINews = async (): Promise<NewsItem[]> => {
   // 使用中文关键词搜索国内AI新闻
-  return fetchGuardianNews('China artificial intelligence OR Baidu OR Tencent OR Alibaba AI OR Chinese AI', '国内AI');
+  return fetchGuardianNews('China artificial intelligence OR Baidu OR Tencent OR Alibaba AI OR Chinese AI');
 };
 
 export const fetchCategoryNews = async (category: string): Promise<NewsItem[]> => {
@@ -142,5 +143,5 @@ export const fetchCategoryNews = async (category: string): Promise<NewsItem[]> =
   const keywords = categoryKeywords[category];
   if (!keywords) return [];
 
-  return fetchGuardianNews(keywords, category);
+  return fetchGuardianNews(keywords);
 };
