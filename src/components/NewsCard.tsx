@@ -35,6 +35,7 @@ const NewsCard = ({
   const [isHovered, setIsHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleOriginalLinkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -56,13 +57,26 @@ const NewsCard = ({
     setShowComments(true);
   };
 
-  // 改进的图片URL生成，使用更可靠的图片源
+  // 使用稳定的图片URL，避免闪烁
   const getImageUrl = () => {
     if (imgError || !imageUrl) {
-      // 使用更稳定的图片源
-      return `https://picsum.photos/800/600?random=${id.replace(/[^0-9]/g, '')}`;
+      // 使用固定的图片ID避免每次渲染时变化
+      const imageId = parseInt(id.replace(/[^0-9]/g, '') || '1', 10) % 1000 + 1;
+      return `https://picsum.photos/800/600?random=${imageId}`;
     }
     return imageUrl;
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImgError(false);
+  };
+
+  const handleImageError = () => {
+    if (!imgError) {
+      setImgError(true);
+      setImageLoaded(false);
+    }
   };
 
   return (
@@ -73,12 +87,19 @@ const NewsCard = ({
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="relative h-48 overflow-hidden">
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-slate-700/50 animate-pulse flex items-center justify-center">
+              <div className="text-slate-400 text-sm">加载中...</div>
+            </div>
+          )}
           <img
             src={getImageUrl()}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-            onError={() => setImgError(true)}
-            onLoad={() => setImgError(false)}
+            className={`w-full h-full object-cover transition-all duration-300 hover:scale-110 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
           />
           <div className="absolute top-4 left-4">
             <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-medium rounded-full">
@@ -103,15 +124,13 @@ const NewsCard = ({
                 )}
               </button>
             )}
-            {isPlaying && (
-              <button
-                onClick={handleCommentsClick}
-                className="p-2 bg-purple-500/70 backdrop-blur-sm rounded-full text-white hover:bg-purple-600/70 transition-colors"
-                title="播客评论"
-              >
-                <MessageCircle className="h-4 w-4" />
-              </button>
-            )}
+            <button
+              onClick={handleCommentsClick}
+              className="p-2 bg-purple-500/70 backdrop-blur-sm rounded-full text-white hover:bg-purple-600/70 transition-colors"
+              title="播客评论"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </button>
             {originalUrl && (
               <button
                 onClick={handleOriginalLinkClick}
