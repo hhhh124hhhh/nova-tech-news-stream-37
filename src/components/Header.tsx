@@ -1,3 +1,4 @@
+
 import React from "react";
 import CategoryNav from "@/components/CategoryNav";
 import LanguageSelector from "@/components/LanguageSelector";
@@ -10,9 +11,17 @@ interface HeaderProps {
   onLanguageChange: (language: string) => void;
   selectedLanguage: string;
   onApiKeyChange: (apiKeys: any) => void;
+  categories: string[];
 }
 
-const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selectedLanguage, onApiKeyChange }: HeaderProps) => {
+const Header = ({ 
+  onCategoryChange, 
+  selectedCategory, 
+  onLanguageChange, 
+  selectedLanguage, 
+  onApiKeyChange,
+  categories 
+}: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-700 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/60">
       <div className="container mx-auto px-4">
@@ -42,16 +51,21 @@ const Header = ({ onCategoryChange, selectedCategory, onLanguageChange, selected
 
           <div className="flex items-center space-x-4">
             <CategoryNav 
+              categories={categories}
               onCategoryChange={onCategoryChange}
               selectedCategory={selectedCategory}
+              currentLanguage={selectedLanguage}
             />
             
             <LanguageSelector 
               onLanguageChange={onLanguageChange}
-              selectedLanguage={selectedLanguage}
+              currentLanguage={selectedLanguage}
             />
             
-            <ApiSettings onApiKeyChange={onApiKeyChange} />
+            <ApiSettings 
+              onApiKeyChange={onApiKeyChange}
+              currentLanguage={selectedLanguage}
+            />
           </div>
         </div>
       </div>
