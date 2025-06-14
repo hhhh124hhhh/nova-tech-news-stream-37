@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Calendar, User, ExternalLink, Link } from "lucide-react";
+import { Calendar, User, ExternalLink, Link, Play, Pause } from "lucide-react";
 
 interface NewsCardProps {
   id: string;
@@ -13,10 +12,26 @@ interface NewsCardProps {
   readTime: string;
   originalUrl?: string;
   onReadMore: (id: string) => void;
+  onPlayPodcast?: (id: string, text: string) => void;
+  isPlaying?: boolean;
 }
 
-const NewsCard = ({ id, title, summary, author, publishDate, category, imageUrl, readTime, originalUrl, onReadMore }: NewsCardProps) => {
+const NewsCard = ({ 
+  id, 
+  title, 
+  summary, 
+  author, 
+  publishDate, 
+  category, 
+  imageUrl, 
+  readTime, 
+  originalUrl, 
+  onReadMore,
+  onPlayPodcast,
+  isPlaying = false
+}: NewsCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleOriginalLinkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -25,37 +40,65 @@ const NewsCard = ({ id, title, summary, author, publishDate, category, imageUrl,
     }
   };
 
+  const handlePlayPodcast = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onPlayPodcast) {
+      const podcastText = `${title}。${summary}`;
+      onPlayPodcast(id, podcastText);
+    }
+  };
+
+  // 使用更可靠的默认图片
+  const defaultImage = `https://picsum.photos/800/600?random=${id}`;
+  const finalImageUrl = imgError ? defaultImage : (imageUrl || defaultImage);
+
   return (
     <article
       className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/10"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {imageUrl && (
-        <div className="relative h-48 overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-          />
-          <div className="absolute top-4 left-4">
-            <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-medium rounded-full">
-              {category}
-            </span>
-          </div>
+      <div className="relative h-48 overflow-hidden">
+        <img
+          src={finalImageUrl}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+          onError={() => setImgError(true)}
+        />
+        <div className="absolute top-4 left-4">
+          <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-medium rounded-full">
+            {category}
+          </span>
+        </div>
+        <div className="absolute top-4 right-4 flex space-x-2">
+          {onPlayPodcast && (
+            <button
+              onClick={handlePlayPodcast}
+              className={`p-2 backdrop-blur-sm rounded-full text-white transition-colors ${
+                isPlaying 
+                  ? 'bg-green-500/70 hover:bg-green-600/70' 
+                  : 'bg-black/50 hover:bg-black/70'
+              }`}
+              title={isPlaying ? "暂停播客" : "播放播客"}
+            >
+              {isPlaying ? (
+                <Pause className="h-4 w-4" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+            </button>
+          )}
           {originalUrl && (
-            <div className="absolute top-4 right-4">
-              <button
-                onClick={handleOriginalLinkClick}
-                className="p-2 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-black/70 transition-colors"
-                title="查看原文"
-              >
-                <Link className="h-4 w-4" />
-              </button>
-            </div>
+            <button
+              onClick={handleOriginalLinkClick}
+              className="p-2 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-black/70 transition-colors"
+              title="查看原文"
+            >
+              <Link className="h-4 w-4" />
+            </button>
           )}
         </div>
-      )}
+      </div>
 
       <div className="p-6">
         <div className="flex items-center justify-between mb-3">

@@ -3,7 +3,7 @@ import { fetchAINews, NewsItem, getApiStatus, hasAnyApiKey, unifyCategory } from
 import { fetchFreeAINews } from "@/services/freeNewsApi";
 import { translateNewsItem } from "@/services/translationApi";
 
-// 更新为AI大模型相关的模拟数据，包含原始链接
+// 更新AI大模型相关的模拟数据，使用更可靠的图片源
 const mockNews: NewsItem[] = [
   {
     id: "mock-1",
@@ -13,7 +13,7 @@ const mockNews: NewsItem[] = [
     author: "OpenAI团队",
     publishDate: new Date().toLocaleDateString('zh-CN'),
     category: "大语言模型",
-    imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://picsum.photos/800/600?random=1",
     readTime: "4分钟",
     source: "OpenAI",
     originalUrl: "https://openai.com/blog/gpt-4-5"
@@ -26,7 +26,7 @@ const mockNews: NewsItem[] = [
     author: "Midjourney团队",
     publishDate: new Date(Date.now() - 86400000).toLocaleDateString('zh-CN'),
     category: "AI绘画",
-    imageUrl: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://picsum.photos/800/600?random=2",
     readTime: "3分钟",
     source: "Midjourney",
     originalUrl: "https://midjourney.com/v6-release"
@@ -39,7 +39,7 @@ const mockNews: NewsItem[] = [
     author: "OpenAI",
     publishDate: new Date(Date.now() - 172800000).toLocaleDateString('zh-CN'),
     category: "AI视频",
-    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://picsum.photos/800/600?random=3",
     readTime: "5分钟",
     source: "OpenAI",
     originalUrl: "https://openai.com/blog/sora"
@@ -52,7 +52,7 @@ const mockNews: NewsItem[] = [
     author: "GitHub",
     publishDate: new Date(Date.now() - 259200000).toLocaleDateString('zh-CN'),
     category: "AI编程",
-    imageUrl: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://picsum.photos/800/600?random=4",
     readTime: "4分钟",
     source: "GitHub",
     originalUrl: "https://github.com/features/copilot"
@@ -65,7 +65,7 @@ const mockNews: NewsItem[] = [
     author: "AutoGPT团队",
     publishDate: new Date(Date.now() - 345600000).toLocaleDateString('zh-CN'),
     category: "AI智能体",
-    imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://picsum.photos/800/600?random=5",
     readTime: "3分钟",
     source: "AutoGPT",
     originalUrl: "https://autogpt.co"
@@ -78,7 +78,7 @@ const mockNews: NewsItem[] = [
     author: "斯坦福大学",
     publishDate: new Date(Date.now() - 432000000).toLocaleDateString('zh-CN'),
     category: "AI训练技术",
-    imageUrl: "https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://picsum.photos/800/600?random=6",
     readTime: "6分钟",
     source: "Nature",
     originalUrl: "https://www.nature.com/articles/s41586-023-06525-1"

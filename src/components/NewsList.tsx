@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useNews } from "@/hooks/useNews";
+import { usePodcast } from "@/hooks/usePodcast";
 import NewsCard from "./NewsCard";
 import NewsModal from "./NewsModal";
-import { AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, XCircle, Volume2 } from "lucide-react";
 
 interface NewsListProps {
   selectedCategory: string;
@@ -11,6 +11,7 @@ interface NewsListProps {
 
 const NewsList = ({ selectedCategory }: NewsListProps) => {
   const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing, currentLanguage, apiStatus, usingFreeApi } = useNews();
+  const { playPodcast, isCurrentlyPlaying, isPlaying, stopPodcast } = usePodcast();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -185,9 +186,23 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-white">
-          {getListTitle()}
-        </h2>
+        <div className="flex items-center space-x-4">
+          <h2 className="text-2xl font-bold text-white">
+            {getListTitle()}
+          </h2>
+          {isPlaying && (
+            <div className="flex items-center space-x-2 text-green-400">
+              <Volume2 className="h-5 w-5 animate-pulse" />
+              <span className="text-sm">播客播放中</span>
+              <button
+                onClick={stopPodcast}
+                className="text-xs bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+              >
+                停止
+              </button>
+            </div>
+          )}
+        </div>
         <div className="flex items-center space-x-4">
           <div className="text-slate-300 text-sm">
             {getCurrentTimeLabel()}: <span className="text-blue-400 font-mono">{formatDate(currentDate)}</span>
@@ -257,6 +272,8 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
             readTime={article.readTime}
             originalUrl={article.originalUrl}
             onReadMore={handleReadMore}
+            onPlayPodcast={playPodcast}
+            isPlaying={isCurrentlyPlaying(article.id)}
           />
         ))}
       </div>
