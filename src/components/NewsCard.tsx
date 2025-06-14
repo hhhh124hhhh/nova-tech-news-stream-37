@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Calendar, User, ExternalLink, Link, Play, Pause, MessageCircle } from "lucide-react";
 import PodcastComments from "./PodcastComments";
 
@@ -37,6 +36,19 @@ const NewsCard = ({
   const [showComments, setShowComments] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  // 使用 useMemo 确保图片URL在组件生命周期内保持稳定
+  const stableImageUrl = useMemo(() => {
+    if (imageUrl && !imgError) {
+      return imageUrl;
+    }
+    // 基于ID生成稳定的图片ID
+    const imageId = Math.abs(id.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0)) % 1000 + 1;
+    return `https://picsum.photos/800/600?random=${imageId}`;
+  }, [id, imageUrl, imgError]);
+
   const handleOriginalLinkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (originalUrl) {
@@ -57,19 +69,8 @@ const NewsCard = ({
     setShowComments(true);
   };
 
-  // 使用稳定的图片URL，避免闪烁
-  const getImageUrl = () => {
-    if (imgError || !imageUrl) {
-      // 使用固定的图片ID避免每次渲染时变化
-      const imageId = parseInt(id.replace(/[^0-9]/g, '') || '1', 10) % 1000 + 1;
-      return `https://picsum.photos/800/600?random=${imageId}`;
-    }
-    return imageUrl;
-  };
-
   const handleImageLoad = () => {
     setImageLoaded(true);
-    setImgError(false);
   };
 
   const handleImageError = () => {
@@ -93,7 +94,7 @@ const NewsCard = ({
             </div>
           )}
           <img
-            src={getImageUrl()}
+            src={stableImageUrl}
             alt={title}
             className={`w-full h-full object-cover transition-all duration-300 hover:scale-110 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
