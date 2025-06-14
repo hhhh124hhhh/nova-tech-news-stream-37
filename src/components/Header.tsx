@@ -3,7 +3,12 @@ import { useState } from "react";
 import { Menu, X, Newspaper } from "lucide-react";
 import SearchBar from "./SearchBar";
 
-const Header = () => {
+interface HeaderProps {
+  onCategoryChange: (category: string) => void;
+  selectedCategory: string;
+}
+
+const Header = ({ onCategoryChange, selectedCategory }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const categories = ["全部", "AI智能体", "AI视频", "AI绘画", "大语言模型", "机器学习"];
@@ -25,7 +30,12 @@ const Header = () => {
               {categories.slice(0, 4).map((category) => (
                 <button
                   key={category}
-                  className="text-slate-300 hover:text-white transition-colors duration-200 font-medium"
+                  onClick={() => onCategoryChange(category)}
+                  className={`transition-colors duration-200 font-medium ${
+                    selectedCategory === category
+                      ? 'text-blue-400 border-b-2 border-blue-400'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
                 >
                   {category}
                 </button>
@@ -48,7 +58,15 @@ const Header = () => {
               {categories.map((category) => (
                 <button
                   key={category}
-                  className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-left"
+                  onClick={() => {
+                    onCategoryChange(category);
+                    setIsMenuOpen(false);
+                  }}
+                  className={`transition-colors duration-200 font-medium text-left ${
+                    selectedCategory === category
+                      ? 'text-blue-400'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
                 >
                   {category}
                 </button>

@@ -2,10 +2,20 @@
 import { useState, useEffect } from "react";
 import { useNews } from "@/hooks/useNews";
 import NewsCard from "./NewsCard";
+import NewsModal from "./NewsModal";
 
-const NewsList = () => {
-  const { news, loading } = useNews();
+interface NewsListProps {
+  selectedCategory: string;
+}
+
+const NewsList = ({ selectedCategory }: NewsListProps) => {
+  const { news, loading, getNewsByCategory, getNewsById } = useNews();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const filteredNews = getNewsByCategory(selectedCategory);
+  const selectedNews = selectedNewsId ? getNewsById(selectedNewsId) : null;
 
   useEffect(() => {
     // 每秒更新当前时间
@@ -25,6 +35,16 @@ const NewsList = () => {
       minute: '2-digit',
       second: '2-digit',
     });
+  };
+
+  const handleReadMore = (id: string) => {
+    setSelectedNewsId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedNewsId(null);
   };
 
   if (loading) {
@@ -56,7 +76,9 @@ const NewsList = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-white">最新资讯</h2>
+        <h2 className="text-2xl font-bold text-white">
+          {selectedCategory === "全部" ? "最新资讯" : selectedCategory}
+        </h2>
         <div className="flex items-center space-x-4">
           <div className="text-slate-300 text-sm">
             当前时间: <span className="text-blue-400 font-mono">{formatDate(currentDate)}</span>
@@ -69,9 +91,10 @@ const NewsList = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {news.map((article) => (
+        {filteredNews.map((article) => (
           <NewsCard
             key={article.id}
+            id={article.id}
             title={article.title}
             summary={article.summary}
             author={article.author}
@@ -79,9 +102,16 @@ const NewsList = () => {
             category={article.category}
             imageUrl={article.imageUrl}
             readTime={article.readTime}
+            onReadMore={handleReadMore}
           />
         ))}
       </div>
+
+      <NewsModal
+        news={selectedNews}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Calendar, User, ExternalLink } from "lucide-react";
 
 interface NewsCardProps {
+  id: string;
   title: string;
   summary: string;
   author: string;
@@ -10,9 +11,10 @@ interface NewsCardProps {
   category: string;
   imageUrl?: string;
   readTime: string;
+  onReadMore: (id: string) => void;
 }
 
-const NewsCard = ({ title, summary, author, publishDate, category, imageUrl, readTime }: NewsCardProps) => {
+const NewsCard = ({ id, title, summary, author, publishDate, category, imageUrl, readTime, onReadMore }: NewsCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -62,6 +64,7 @@ const NewsCard = ({ title, summary, author, publishDate, category, imageUrl, rea
         </p>
 
         <button
+          onClick={() => onReadMore(id)}
           className={`flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-all duration-200 font-medium ${
             isHovered ? "transform translate-x-1" : ""
           }`}
