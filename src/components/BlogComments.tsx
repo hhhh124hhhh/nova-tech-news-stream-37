@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { MessageCircle, Heart, Trash2, Send, User, X } from 'lucide-react';
+import { MessageCircle, Heart, Trash2, Send, User } from 'lucide-react';
 import { useComments } from '@/hooks/useComments';
 
 interface BlogCommentsProps {
@@ -36,28 +36,20 @@ const BlogComments = ({ blogId, title, isOpen = true, onClose }: BlogCommentsPro
 
   if (!isOpen) return null;
 
-  const CommentsContent = () => (
-    <div className="bg-slate-800/95 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b border-slate-700">
+  return (
+    <div className="bg-slate-700/30 backdrop-blur-sm rounded-xl border border-slate-600/50 overflow-hidden">
+      <div className="flex items-center justify-between p-4 border-b border-slate-600">
         <div className="flex items-center space-x-3">
           <MessageCircle className="h-5 w-5 text-blue-400" />
           <h3 className="text-lg font-semibold text-white">
-            博客评论 ({comments.length})
+            评论 ({comments.length})
           </h3>
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        )}
       </div>
 
       <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
         {comments.map((comment) => (
-          <div key={comment.id} className="bg-slate-700/30 rounded-lg p-4">
+          <div key={comment.id} className="bg-slate-800/50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4 text-blue-400" />
@@ -92,7 +84,7 @@ const BlogComments = ({ blogId, title, isOpen = true, onClose }: BlogCommentsPro
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t border-slate-700 space-y-3">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-slate-600 space-y-3">
         <input
           type="text"
           placeholder="你的昵称（可选）"
@@ -119,20 +111,6 @@ const BlogComments = ({ blogId, title, isOpen = true, onClose }: BlogCommentsPro
       </form>
     </div>
   );
-
-  // 如果有onClose回调，显示为模态框
-  if (onClose) {
-    return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full max-h-[80vh] overflow-hidden">
-          <CommentsContent />
-        </div>
-      </div>
-    );
-  }
-
-  // 否则直接渲染内容
-  return <CommentsContent />;
 };
 
 export default BlogComments;
