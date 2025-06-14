@@ -8,6 +8,81 @@ export interface TranslationCache {
 // 内存中的翻译缓存
 const translationCache: TranslationCache = {};
 
+// 生成更吸引人的摘要
+const generateAttractiveDescription = (originalSummary: string, title: string, targetLang: string): string => {
+  // AI相关的吸引性词汇和短语
+  const attractivePhrases = {
+    zh: [
+      "🚀 突破性进展！",
+      "💡 创新亮点：",
+      "🔥 热门话题：",
+      "⚡ 最新突破：",
+      "🌟 重磅消息：",
+      "🎯 核心看点：",
+      "📈 行业变革：",
+      "🧠 智能革命："
+    ],
+    en: [
+      "🚀 Breakthrough Alert!",
+      "💡 Innovation Spotlight:",
+      "🔥 Trending Now:",
+      "⚡ Latest Breakthrough:",
+      "🌟 Major Update:",
+      "🎯 Key Highlights:",
+      "📈 Industry Game-Changer:",
+      "🧠 AI Revolution:"
+    ],
+    ja: [
+      "🚀 画期的な進歩！",
+      "💡 革新のハイライト：",
+      "🔥 話題沸騰：",
+      "⚡ 最新の突破：",
+      "🌟 重大ニュース：",
+      "🎯 注目ポイント：",
+      "📈 業界変革：",
+      "🧠 AI革命："
+    ],
+    ko: [
+      "🚀 혁신적 돌파구!",
+      "💡 혁신 하이라이트:",
+      "🔥 화제의 중심:",
+      "⚡ 최신 돌파구:",
+      "🌟 중대 발표:",
+      "🎯 핵심 포인트:",
+      "📈 업계 변혁:",
+      "🧠 AI 혁명:"
+    ]
+  };
+
+  const phrases = attractivePhrases[targetLang as keyof typeof attractivePhrases] || attractivePhrases.zh;
+  const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+  
+  // 增强摘要的吸引力
+  let enhancedSummary = originalSummary;
+  
+  // 如果摘要较短，添加吸引性前缀
+  if (enhancedSummary.length < 100) {
+    enhancedSummary = `${randomPhrase} ${enhancedSummary}`;
+  }
+  
+  // 添加相关的吸引性结尾
+  const endings = {
+    zh: ["了解更多最新动态！", "探索AI的无限可能！", "引领科技新潮流！"],
+    en: ["Stay ahead of the curve!", "Explore limitless AI possibilities!", "Leading the tech revolution!"],
+    ja: ["最新動向をチェック！", "AIの無限の可能性を探求！", "テック革命をリード！"],
+    ko: ["최신 동향을 확인하세요!", "AI의 무한한 가능성을 탐험!", "기술 혁명을 선도!"]
+  };
+  
+  const endingPhrases = endings[targetLang as keyof typeof endings] || endings.zh;
+  const randomEnding = endingPhrases[Math.floor(Math.random() * endingPhrases.length)];
+  
+  if (enhancedSummary.length < 150) {
+    enhancedSummary += ` ${randomEnding}`;
+  }
+  
+  return enhancedSummary;
+};
+
 // 模拟翻译API（实际项目中可以使用Google Translate API或其他翻译服务）
 export const translateText = async (text: string, targetLang: string): Promise<string> => {
   // 如果是中文，直接返回
@@ -116,7 +191,7 @@ export const translateText = async (text: string, targetLang: string): Promise<s
       '计算机视觉': '컴퓨터 비전',
       '图像生成': '이미지 생성',
       '视频生成': '비디오 생성',
-      '代码生成': '코드 생성',
+      '代码생成': '코드 생성',
       '自动编程': '자동 프로그래밍'
     };
     
@@ -137,7 +212,12 @@ export const translateText = async (text: string, targetLang: string): Promise<s
 // 批量翻译新闻内容
 export const translateNewsItem = async (newsItem: any, targetLang: string) => {
   if (targetLang === 'zh') {
-    return newsItem;
+    // 即使是中文，也要生成更吸引人的摘要
+    const enhancedSummary = generateAttractiveDescription(newsItem.summary, newsItem.title, 'zh');
+    return {
+      ...newsItem,
+      summary: enhancedSummary
+    };
   }
 
   const [translatedTitle, translatedSummary, translatedCategory] = await Promise.all([
@@ -146,10 +226,13 @@ export const translateNewsItem = async (newsItem: any, targetLang: string) => {
     translateText(newsItem.category, targetLang)
   ]);
 
+  // 生成更吸引人的翻译摘要
+  const enhancedSummary = generateAttractiveDescription(translatedSummary, translatedTitle, targetLang);
+
   return {
     ...newsItem,
     title: translatedTitle,
-    summary: translatedSummary,
+    summary: enhancedSummary,
     category: translatedCategory
   };
 };
