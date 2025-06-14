@@ -85,21 +85,47 @@ export const useNews = () => {
   const [loading, setLoading] = useState(true);
   const [apiKeyMissing, setApiKeyMissing] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('zh');
+  const [apiStatus, setApiStatus] = useState<{
+    newsapi: boolean;
+    juhe: boolean;
+    tianapi: boolean;
+    currents: boolean;
+  }>({
+    newsapi: false,
+    juhe: false,
+    tianapi: false,
+    currents: false
+  });
 
   useEffect(() => {
     const fetchAllNews = async () => {
       setLoading(true);
       try {
-        console.log('开始获取AI大模型新闻数据...');
+        console.log('开始从多个新闻API获取AI大模型数据...');
         
         const allNews = await fetchAINews();
 
-        console.log(`获取到 ${allNews.length} 条AI大模型新闻`);
+        console.log(`成功获取到 ${allNews.length} 条AI大模型新闻`);
+
+        // 检查API密钥状态
+        const hasNewsAPI = !!import.meta.env.VITE_NEWS_API_KEY;
+        const hasJuheAPI = !!import.meta.env.VITE_JUHE_API_KEY;
+        const hasTianAPI = !!import.meta.env.VITE_TIANAPI_KEY;
+        const hasCurrentsAPI = !!import.meta.env.VITE_CURRENTS_API_KEY;
+
+        setApiStatus({
+          newsapi: hasNewsAPI,
+          juhe: hasJuheAPI,
+          tianapi: hasTianAPI,
+          currents: hasCurrentsAPI
+        });
+
+        const hasAnyAPI = hasNewsAPI || hasJuheAPI || hasTianAPI || hasCurrentsAPI;
 
         if (allNews.length === 0) {
-          console.log('API调用失败，使用AI大模型模拟数据');
+          console.log('所有API调用失败或无可用API，使用AI大模型演示数据');
           setNews(mockNews);
-          setApiKeyMissing(true);
+          setApiKeyMissing(!hasAnyAPI);
         } else {
           const sortedNews = allNews.sort((a, b) => 
             new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
@@ -118,6 +144,7 @@ export const useNews = () => {
 
     fetchAllNews();
 
+    // 每30分钟更新一次新闻
     const interval = setInterval(() => {
       console.log("正在更新最新AI大模型新闻数据...");
       fetchAllNews();
@@ -182,6 +209,7 @@ export const useNews = () => {
     getNewsById, 
     apiKeyMissing,
     changeLanguage,
-    currentLanguage
+    currentLanguage,
+    apiStatus
   };
 };

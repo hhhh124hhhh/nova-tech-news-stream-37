@@ -1,16 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { useNews } from "@/hooks/useNews";
 import NewsCard from "./NewsCard";
 import NewsModal from "./NewsModal";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, XCircle } from "lucide-react";
 
 interface NewsListProps {
   selectedCategory: string;
 }
 
 const NewsList = ({ selectedCategory }: NewsListProps) => {
-  const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing, currentLanguage } = useNews();
+  const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing, currentLanguage, apiStatus } = useNews();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,20 +75,45 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
 
   const getDemoDataMessage = () => {
     if (currentLanguage === 'en') return {
-      title: "Using Demo Data",
-      description: "To get real-time news, please add a valid NewsAPI key in src/services/newsApi.ts"
+      title: "API Configuration Required",
+      description: "Configure news APIs in project settings to get real-time news. Check API_SETUP.md for details."
     };
     if (currentLanguage === 'ja') return {
-      title: "デモデータを使用中",
-      description: "リアルタイムニュースを取得するには、src/services/newsApi.tsに有効なNewsAPIキーを追加してください"
+      title: "API設定が必要",
+      description: "リアルタイムニュースを取得するには、プロジェクト設定でニュースAPIを設定してください。"
     };
     if (currentLanguage === 'ko') return {
-      title: "데모 데이터 사용 중",
-      description: "실시간 뉴스를 얻으려면 src/services/newsApi.ts에 유효한 NewsAPI 키를 추가하세요"
+      title: "API 구성 필요",
+      description: "실시간 뉴스를 얻으려면 프로젝트 설정에서 뉴스 API를 구성하세요."
     };
     return {
-      title: "正在使用演示数据",
-      description: "要获取实时新闻，请在 src/services/newsApi.ts 中添加有效的 NewsAPI 密钥"
+      title: "需要配置新闻API",
+      description: "请在项目设置中配置新闻API密钥以获取实时新闻。详见 API_SETUP.md 文档。"
+    };
+  };
+
+  const getApiStatusInfo = () => {
+    const activeApis = Object.entries(apiStatus).filter(([_, active]) => active);
+    const totalApis = Object.keys(apiStatus).length;
+    
+    if (currentLanguage === 'en') return {
+      label: `APIs: ${activeApis.length}/${totalApis} active`,
+      apis: {
+        newsapi: 'NewsAPI (International)',
+        juhe: 'JuHe API (China)',
+        tianapi: 'TianAPI (Comprehensive)',
+        currents: 'Currents API (Alternative)'
+      }
+    };
+    
+    return {
+      label: `API状态: ${activeApis.length}/${totalApis} 个已配置`,
+      apis: {
+        newsapi: 'NewsAPI (国际新闻)',
+        juhe: '聚合数据 (中国新闻)',
+        tianapi: '天行数据 (综合新闻)',
+        currents: 'Currents API (备选)'
+      }
     };
   };
 
@@ -127,6 +151,7 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
   }
 
   const demoMessage = getDemoDataMessage();
+  const apiStatusInfo = getApiStatusInfo();
 
   return (
     <div>
@@ -142,6 +167,27 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-sm font-medium">{getLiveUpdateLabel()}</span>
           </div>
+        </div>
+      </div>
+
+      {/* API状态信息 */}
+      <div className="mb-6 p-4 bg-slate-800/50 border border-slate-700/50 rounded-lg">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-slate-200 font-medium">{apiStatusInfo.label}</h3>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {Object.entries(apiStatus).map(([key, active]) => (
+            <div key={key} className="flex items-center space-x-2">
+              {active ? (
+                <CheckCircle className="h-4 w-4 text-green-400" />
+              ) : (
+                <XCircle className="h-4 w-4 text-red-400" />
+              )}
+              <span className={`text-xs ${active ? 'text-green-300' : 'text-red-300'}`}>
+                {apiStatusInfo.apis[key as keyof typeof apiStatusInfo.apis]}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
