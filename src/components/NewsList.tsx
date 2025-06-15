@@ -7,16 +7,18 @@ import { AlertCircle, CheckCircle, XCircle, Volume2 } from "lucide-react";
 
 interface NewsListProps {
   selectedCategory: string;
+  customNews?: NewsItem[];
 }
 
-const NewsList = ({ selectedCategory }: NewsListProps) => {
+const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
   const { news, loading, getNewsByCategory, getNewsById, apiKeyMissing, currentLanguage, apiStatus, usingFreeApi } = useNews();
   const { playPodcast, isCurrentlyPlaying, isPlaying, stopPodcast } = usePodcast();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredNews = getNewsByCategory(selectedCategory);
+  // 使用自定义新闻数据或者默认的筛选逻辑
+  const displayNews = customNews || getNewsByCategory(selectedCategory);
   const selectedNews = selectedNewsId ? getNewsById(selectedNewsId) : null;
 
   useEffect(() => {
@@ -259,7 +261,7 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredNews.map((article) => (
+        {displayNews.map((article) => (
           <NewsCard
             key={article.id}
             id={article.id}
@@ -278,7 +280,7 @@ const NewsList = ({ selectedCategory }: NewsListProps) => {
         ))}
       </div>
 
-      {filteredNews.length === 0 && !loading && (
+      {displayNews.length === 0 && !loading && (
         <div className="text-center text-slate-400 py-12">
           <p>{getNoNewsMessage()}</p>
         </div>
