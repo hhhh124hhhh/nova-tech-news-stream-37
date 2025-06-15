@@ -1,10 +1,26 @@
 
 import { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { Calendar, User, Heart, MessageCircle, Clock, Tag } from 'lucide-react';
 import BlogComments from './BlogComments';
 import { useBlogLikes } from '@/hooks/useBlogLikes';
+
+// Dynamic import for react-markdown to handle loading
+let ReactMarkdown: any = null;
+let remarkGfm: any = null;
+
+// Dynamically import markdown dependencies
+const loadMarkdown = async () => {
+  if (!ReactMarkdown) {
+    try {
+      const markdown = await import('react-markdown');
+      const gfm = await import('remark-gfm');
+      ReactMarkdown = markdown.default;
+      remarkGfm = gfm.default;
+    } catch (error) {
+      console.warn('Failed to load markdown dependencies:', error);
+    }
+  }
+};
 
 interface BlogPostProps {
   post: {
@@ -24,11 +40,20 @@ const BlogPost = ({ post }: BlogPostProps) => {
   const { getBlogLikes, toggleLike } = useBlogLikes();
   const [showComments, setShowComments] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [markdownLoaded, setMarkdownLoaded] = useState(false);
   
   const likeData = getBlogLikes(post.id);
 
   const handleLike = () => {
     toggleLike(post.id);
+  };
+
+  const handleExpand = async () => {
+    if (!markdownLoaded) {
+      await loadMarkdown();
+      setMarkdownLoaded(true);
+    }
+    setIsExpanded(!isExpanded);
   };
 
   const formatDate = (dateString: string) => {
@@ -70,6 +95,43 @@ def create_model():
 
 人工智能技术正在快速发展，为各行各业带来新的机遇和挑战。
   `;
+
+  const renderMarkdownContent = () => {
+    if (ReactMarkdown && remarkGfm) {
+      return (
+        <div className="prose prose-invert max-w-none">
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm]}
+            className="text-slate-300"
+            components={{
+              h1: ({node, ...props}: any) => <h1 className="text-3xl font-bold text-white mb-4" {...props} />,
+              h2: ({node, ...props}: any) => <h2 className="text-2xl font-bold text-white mb-3 mt-6" {...props} />,
+              h3: ({node, ...props}: any) => <h3 className="text-xl font-bold text-white mb-2 mt-4" {...props} />,
+              p: ({node, ...props}: any) => <p className="text-slate-300 mb-4 leading-relaxed" {...props} />,
+              ul: ({node, ...props}: any) => <ul className="text-slate-300 mb-4 list-disc list-inside space-y-1" {...props} />,
+              li: ({node, ...props}: any) => <li className="text-slate-300" {...props} />,
+              code: ({node, inline, ...props}: any) => 
+                inline ? 
+                  <code className="bg-slate-700 text-blue-300 px-1 py-0.5 rounded text-sm" {...props} /> :
+                  <code className="block bg-slate-900 text-green-300 p-4 rounded-lg overflow-x-auto text-sm" {...props} />,
+              pre: ({node, ...props}: any) => <pre className="bg-slate-900 rounded-lg mb-4" {...props} />,
+              strong: ({node, ...props}: any) => <strong className="text-blue-400 font-semibold" {...props} />
+            }}
+          >
+            {markdownContent}
+          </ReactMarkdown>
+        </div>
+      );
+    } else {
+      // Fallback rendering without markdown
+      return (
+        <div className="prose prose-invert max-w-none">
+          <h1 className="text-3xl font-bold text-white mb-4">{post.title}</h1>
+          <div className="text-slate-300 whitespace-pre-wrap">{post.content}</div>
+        </div>
+      );
+    }
+  };
 
   return (
     <article className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300">
@@ -116,28 +178,7 @@ def create_model():
             </p>
           </>
         ) : (
-          <div className="prose prose-invert max-w-none">
-            <ReactMarkdown 
-              remarkPlugins={[remarkGfm]}
-              className="text-slate-300"
-              components={{
-                h1: ({node, ...props}) => <h1 className="text-3xl font-bold text-white mb-4" {...props} />,
-                h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-white mb-3 mt-6" {...props} />,
-                h3: ({node, ...props}) => <h3 className="text-xl font-bold text-white mb-2 mt-4" {...props} />,
-                p: ({node, ...props}) => <p className="text-slate-300 mb-4 leading-relaxed" {...props} />,
-                ul: ({node, ...props}) => <ul className="text-slate-300 mb-4 list-disc list-inside space-y-1" {...props} />,
-                li: ({node, ...props}) => <li className="text-slate-300" {...props} />,
-                code: ({node, inline, ...props}) => 
-                  inline ? 
-                    <code className="bg-slate-700 text-blue-300 px-1 py-0.5 rounded text-sm" {...props} /> :
-                    <code className="block bg-slate-900 text-green-300 p-4 rounded-lg overflow-x-auto text-sm" {...props} />,
-                pre: ({node, ...props}) => <pre className="bg-slate-900 rounded-lg mb-4" {...props} />,
-                strong: ({node, ...props}) => <strong className="text-blue-400 font-semibold" {...props} />
-              }}
-            >
-              {markdownContent}
-            </ReactMarkdown>
-          </div>
+          renderMarkdownContent()
         )}
 
         <div className="flex items-center justify-between mt-6">
@@ -164,7 +205,7 @@ def create_model():
           </div>
           
           <button 
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={handleExpand}
             className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
           >
             {isExpanded ? '收起' : '阅读全文'} →
