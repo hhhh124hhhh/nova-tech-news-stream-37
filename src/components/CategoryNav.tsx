@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Hash } from "lucide-react";
 
 interface CategoryNavProps {
   categories: string[];
@@ -23,9 +23,9 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
     return "更多分类";
   };
 
-  // 显示前5个分类，其余放在下拉菜单中
-  const visibleCategories = categories.slice(0, 5);
-  const hiddenCategories = categories.slice(5);
+  // 显示前4个分类，其余放在下拉菜单中
+  const visibleCategories = categories.slice(0, 4);
+  const hiddenCategories = categories.slice(4);
 
   return (
     <nav className="flex items-center space-x-1">
@@ -37,10 +37,11 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
           size="sm"
           className={`transition-all duration-200 text-xs whitespace-nowrap ${
             selectedCategory === category
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'text-slate-300 hover:text-white hover:bg-slate-800'
+              ? 'bg-blue-600 text-white shadow-md hover:bg-blue-700'
+              : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-300 dark:hover:text-blue-400 dark:hover:bg-slate-800'
           }`}
         >
+          <Hash className="h-3 w-3 mr-1" />
           {category}
         </Button>
       ))}
@@ -48,19 +49,24 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
       {hiddenCategories.length > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800 text-xs">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-300 dark:hover:text-blue-400 dark:hover:bg-slate-800 text-xs"
+            >
               {getMoreCategoriesText()} <ChevronDown className="ml-1 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-slate-800 border-slate-700">
+          <DropdownMenuContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             {hiddenCategories.map((category) => (
               <DropdownMenuItem
                 key={category}
                 onClick={() => onCategoryChange(category)}
-                className={`text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer ${
-                  selectedCategory === category ? 'bg-slate-700 text-white' : ''
+                className={`text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-300 dark:hover:text-blue-400 dark:hover:bg-slate-700 cursor-pointer ${
+                  selectedCategory === category ? 'bg-blue-50 text-blue-600 dark:bg-slate-700 dark:text-blue-400' : ''
                 }`}
               >
+                <Hash className="h-3 w-3 mr-2" />
                 {category}
               </DropdownMenuItem>
             ))}

@@ -4,7 +4,7 @@ import { usePodcast } from "@/hooks/usePodcast";
 import { NewsItem } from "@/services/newsApi";
 import NewsCard from "./NewsCard";
 import NewsModal from "./NewsModal";
-import { AlertCircle, CheckCircle, XCircle, Volume2 } from "lucide-react";
+import { AlertCircle, CheckCircle, XCircle, Volume2, Globe, Rss } from "lucide-react";
 
 interface NewsListProps {
   selectedCategory: string;
@@ -83,10 +83,10 @@ const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
     const isAllCategory = selectedCategory === "全部" || selectedCategory === "All" || selectedCategory === "すべて" || selectedCategory === "전체";
     
     if (isAllCategory) {
-      if (currentLanguage === 'en') return "Latest AI News";
-      if (currentLanguage === 'ja') return "最新AIニュース";
-      if (currentLanguage === 'ko') return "최신 AI 뉴스";
-      return "最新AI资讯";
+      if (currentLanguage === 'en') return "Latest Global News";
+      if (currentLanguage === 'ja') return "最新グローバルニュース";
+      if (currentLanguage === 'ko') return "최신 글로벌 뉴스";
+      return "最新全球资讯";
     }
     
     return selectedCategory;
@@ -163,18 +163,18 @@ const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
         {[...Array(6)].map((_, index) => (
           <div
             key={index}
-            className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden animate-pulse"
+            className="bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 overflow-hidden animate-pulse shadow-sm"
           >
-            <div className="h-48 bg-slate-700/50"></div>
+            <div className="h-48 bg-slate-200 dark:bg-slate-700/50"></div>
             <div className="p-6">
               <div className="flex space-x-4 mb-3">
-                <div className="h-4 bg-slate-700/50 rounded w-20"></div>
-                <div className="h-4 bg-slate-700/50 rounded w-16"></div>
+                <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-20"></div>
+                <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-16"></div>
               </div>
-              <div className="h-6 bg-slate-700/50 rounded mb-3"></div>
+              <div className="h-6 bg-slate-200 dark:bg-slate-700/50 rounded mb-3"></div>
               <div className="space-y-2">
-                <div className="h-4 bg-slate-700/50 rounded"></div>
-                <div className="h-4 bg-slate-700/50 rounded w-3/4"></div>
+                <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded"></div>
+                <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-3/4"></div>
               </div>
             </div>
           </div>
@@ -190,11 +190,14 @@ const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
-          <h2 className="text-2xl font-bold text-white">
-            {getListTitle()}
-          </h2>
+          <div className="flex items-center space-x-2">
+            <Globe className="h-6 w-6 text-blue-600" />
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white">
+              {getListTitle()}
+            </h2>
+          </div>
           {isPlaying && (
-            <div className="flex items-center space-x-2 text-green-400">
+            <div className="flex items-center space-x-2 text-green-500">
               <Volume2 className="h-5 w-5 animate-pulse" />
               <span className="text-sm">播客播放中</span>
               <button
@@ -207,22 +210,23 @@ const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
           )}
         </div>
         <div className="flex items-center space-x-4">
-          <div className="text-slate-300 text-sm">
-            {getCurrentTimeLabel()}: <span className="text-blue-400 font-mono">{formatDate(currentDate)}</span>
+          <div className="text-slate-500 dark:text-slate-300 text-sm">
+            {getCurrentTimeLabel()}: <span className="text-blue-500 font-mono">{formatDate(currentDate)}</span>
           </div>
-          <div className="flex items-center space-x-2 text-green-400">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+          <div className="flex items-center space-x-2 text-green-500">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <Rss className="h-4 w-4" />
             <span className="text-sm font-medium">{getLiveUpdateLabel()}</span>
           </div>
         </div>
       </div>
 
       {/* API状态信息 */}
-      <div className="mb-6 p-4 bg-slate-800/50 border border-slate-700/50 rounded-lg">
+      <div className="mb-6 p-4 bg-white/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg backdrop-blur-sm">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-slate-200 font-medium">{apiStatusInfo.label}</h3>
+          <h3 className="text-slate-700 dark:text-slate-200 font-medium">{apiStatusInfo.label}</h3>
           {usingFreeApi && (
-            <span className="text-xs bg-green-600 text-white px-2 py-1 rounded">
+            <span className="text-xs bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-2 py-1 rounded border border-green-200 dark:border-green-800">
               {currentLanguage === 'en' ? 'Demo API' : '演示API'}
             </span>
           )}
@@ -231,18 +235,18 @@ const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
           {Object.entries(apiStatus).map(([key, active]) => (
             <div key={key} className="flex items-center space-x-2">
               {active ? (
-                <CheckCircle className="h-4 w-4 text-green-400" />
+                <CheckCircle className="h-4 w-4 text-green-500" />
               ) : (
                 <XCircle className="h-4 w-4 text-red-400" />
               )}
-              <span className={`text-xs ${active ? 'text-green-300' : 'text-red-300'}`}>
+              <span className={`text-xs ${active ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
                 {apiStatusInfo.apis[key as keyof typeof apiStatusInfo.apis]}
               </span>
             </div>
           ))}
         </div>
         {usingFreeApi && (
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
             {currentLanguage === 'en' ? 
               'Currently using free demo APIs. Configure your API keys for real-time news.' :
               '当前使用免费演示API。配置您的API密钥以获取实时新闻。'
@@ -252,9 +256,9 @@ const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
       </div>
 
       {apiKeyMissing && (
-        <div className="mb-6 p-4 bg-yellow-900/50 border border-yellow-600/50 rounded-lg flex items-center space-x-3">
-          <AlertCircle className="h-5 w-5 text-yellow-400 flex-shrink-0" />
-          <div className="text-yellow-200 text-sm">
+        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-600/50 rounded-lg flex items-center space-x-3">
+          <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
+          <div className="text-yellow-800 dark:text-yellow-200 text-sm">
             <p className="font-medium">{demoMessage.title}</p>
             <p>{demoMessage.description}</p>
           </div>
@@ -282,7 +286,8 @@ const NewsList = ({ selectedCategory, customNews }: NewsListProps) => {
       </div>
 
       {displayNews.length === 0 && !loading && (
-        <div className="text-center text-slate-400 py-12">
+        <div className="text-center text-slate-500 dark:text-slate-400 py-12">
+          <Globe className="h-12 w-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
           <p>{getNoNewsMessage()}</p>
         </div>
       )}
