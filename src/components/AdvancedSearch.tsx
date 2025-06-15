@@ -1,9 +1,25 @@
-import { useState } from "react";
-import { Filter, Calendar, Globe, Tag } from "lucide-react";
+import React, { useState, useCallback } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
+
+export interface SearchFilters {
+  keywords: string[];
+  categories: string[];
+  dateRange: string;
+  startDate?: Date;
+  endDate?: Date;
+  sources: string[];
+  relevance: number;
+}
 
 interface AdvancedSearchProps {
   onAdvancedSearch: (filters: SearchFilters) => void;
@@ -13,375 +29,323 @@ interface AdvancedSearchProps {
   onToggle: () => void;
 }
 
-export interface SearchFilters {
-  keywords: string[];
-  categories: string[];
-  dateRange: string;
-  sources: string[];
-  sortBy: string;
-}
+export function AdvancedSearch({ onAdvancedSearch, currentLanguage, categories, isOpen, onToggle }: AdvancedSearchProps) {
+  const [keywordsInput, setKeywordsInput] = useState("");
+  const [filters, setFilters] = useState<SearchFilters>({
+    keywords: [],
+    categories: [],
+    dateRange: "all",
+    sources: [],
+    relevance: 50,
+  });
+  const [date, setDate] = React.useState<Date | undefined>(undefined);
 
-const AdvancedSearch = ({ onAdvancedSearch, currentLanguage, categories, isOpen, onToggle }: AdvancedSearchProps) => {
-  const [keywords, setKeywords] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [dateRange, setDateRange] = useState("all");
-  const [selectedSources, setSelectedSources] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState("date");
-  const [keywordInput, setKeywordInput] = useState("");
-
-  const getTexts = () => {
-    if (currentLanguage === 'en') return {
-      title: "Advanced Search",
-      keywords: "Keywords",
-      addKeyword: "Add Keyword",
-      categories: "Categories", 
-      dateRange: "Date Range",
-      sources: "Sources",
-      sortBy: "Sort By",
-      search: "Search",
-      reset: "Reset",
-      keywordPlaceholder: "Enter keyword...",
-      dateOptions: {
-        all: "All Time",
-        today: "Today", 
-        week: "This Week",
-        month: "This Month",
-        year: "This Year"
-      },
-      sortOptions: {
-        date: "Latest First",
-        relevance: "Relevance",
-        popularity: "Popularity"
-      },
-      sourceOptions: {
-        all: "All Sources",
-        newsapi: "NewsAPI",
-        hackernews: "HackerNews", 
-        reddit: "Reddit",
-        github: "GitHub"
-      }
-    };
-    
-    if (currentLanguage === 'ja') return {
-      title: "高度検索",
-      keywords: "キーワード",
-      addKeyword: "キーワード追加",
-      categories: "カテゴリ",
-      dateRange: "日付範囲", 
-      sources: "ソース",
-      sortBy: "ソート",
-      search: "検索",
-      reset: "リセット",
-      keywordPlaceholder: "キーワード入力...",
-      dateOptions: {
-        all: "全期間",
-        today: "今日",
-        week: "今週", 
-        month: "今月",
-        year: "今年"
-      },
-      sortOptions: {
-        date: "最新順",
-        relevance: "関連性",
-        popularity: "人気順"
-      },
-      sourceOptions: {
-        all: "全ソース",
-        newsapi: "NewsAPI",
-        hackernews: "HackerNews",
-        reddit: "Reddit", 
-        github: "GitHub"
-      }
-    };
-
-    if (currentLanguage === 'ko') return {
-      title: "고급 검색",
-      keywords: "키워드",
-      addKeyword: "키워드 추가",
-      categories: "카테고리",
-      dateRange: "날짜 범위",
-      sources: "출처", 
-      sortBy: "정렬",
-      search: "검색",
-      reset: "초기화",
-      keywordPlaceholder: "키워드 입력...",
-      dateOptions: {
-        all: "전체 기간",
-        today: "오늘",
-        week: "이번 주",
-        month: "이번 달", 
-        year: "올해"
-      },
-      sortOptions: {
-        date: "최신순",
-        relevance: "관련성",
-        popularity: "인기순"
-      },
-      sourceOptions: {
-        all: "모든 출처",
-        newsapi: "NewsAPI", 
-        hackernews: "HackerNews",
-        reddit: "Reddit",
-        github: "GitHub"
-      }
-    };
-    
-    // 默认中文
-    return {
-      title: "高级搜索",
-      keywords: "关键词",
-      addKeyword: "添加关键词", 
-      categories: "分类",
-      dateRange: "日期范围",
-      sources: "来源",
-      sortBy: "排序方式",
-      search: "搜索",
-      reset: "重置", 
-      keywordPlaceholder: "输入关键词...",
-      dateOptions: {
-        all: "全部时间",
-        today: "今天",
-        week: "本周",
-        month: "本月",
-        year: "今年"
-      },
-      sortOptions: {
-        date: "最新优先", 
-        relevance: "相关性",
-        popularity: "热门度"
-      },
-      sourceOptions: {
-        all: "全部来源",
-        newsapi: "NewsAPI",
-        hackernews: "HackerNews",
-        reddit: "Reddit",
-        github: "GitHub"
-      }
-    };
-  };
-
-  const texts = getTexts();
-
-  const addKeyword = () => {
-    if (keywordInput.trim() && !keywords.includes(keywordInput.trim())) {
-      setKeywords([...keywords, keywordInput.trim()]);
-      setKeywordInput("");
+  const handleAddKeyword = () => {
+    if (keywordsInput.trim() && !filters.keywords.includes(keywordsInput.trim())) {
+      setFilters({ ...filters, keywords: [...filters.keywords, keywordsInput.trim()] });
+      setKeywordsInput("");
     }
   };
 
-  const removeKeyword = (keyword: string) => {
-    setKeywords(keywords.filter(k => k !== keyword));
+  const handleRemoveKeyword = (keyword: string) => {
+    setFilters({ ...filters, keywords: filters.keywords.filter((k) => k !== keyword) });
   };
 
   const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
+    if (filters.categories.includes(category)) {
+      setFilters({ ...filters, categories: filters.categories.filter((c) => c !== category) });
+    } else {
+      setFilters({ ...filters, categories: [...filters.categories, category] });
+    }
   };
 
-  const toggleSource = (source: string) => {
-    setSelectedSources(prev =>
-      prev.includes(source)
-        ? prev.filter(s => s !== source) 
-        : [...prev, source]
-    );
+  const handleDateRangeChange = (range: string) => {
+    setFilters({ ...filters, dateRange: range });
   };
 
-  const handleSearch = () => {
-    const filters: SearchFilters = {
-      keywords,
-      categories: selectedCategories,
-      dateRange,
-      sources: selectedSources,
-      sortBy
-    };
+  const handleSourceChange = (source: string) => {
+    if (filters.sources.includes(source)) {
+      setFilters({ ...filters, sources: filters.sources.filter((s) => s !== source) });
+    } else {
+      setFilters({ ...filters, sources: [...filters.sources, source] });
+    }
+  };
+
+  const handleRelevanceChange = useCallback(
+    (value: number[]) => {
+      setFilters((prevFilters) => ({ ...prevFilters, relevance: value[0] }));
+    },
+    []
+  );
+
+  const handleSubmit = () => {
     onAdvancedSearch(filters);
   };
 
-  const handleReset = () => {
-    setKeywords([]);
-    setSelectedCategories([]);
-    setDateRange("all");
-    setSelectedSources([]);
-    setSortBy("date");
-    setKeywordInput("");
-    onAdvancedSearch({
-      keywords: [],
-      categories: [],
-      dateRange: "all", 
-      sources: [],
-      sortBy: "date"
-    });
+  const getKeywordsText = () => {
+    if (currentLanguage === 'en') return "Keywords";
+    if (currentLanguage === 'ja') return "キーワード";
+    if (currentLanguage === 'ko') return "키워드";
+    return "关键词";
   };
 
-  if (!isOpen) {
-    return (
-      <Button
-        onClick={onToggle}
-        variant="outline"
-        size="sm"
-        className="bg-slate-800/50 border-slate-600 text-slate-300 hover:bg-slate-700"
-      >
-        <Filter className="h-4 w-4 mr-2" />
-        {texts.title}
-      </Button>
-    );
-  }
+  const getAddText = () => {
+    if (currentLanguage === 'en') return "Add";
+    if (currentLanguage === 'ja') return "追加";
+    if (currentLanguage === 'ko') return "추가";
+    return "添加";
+  };
+
+  const getCategoriesText = () => {
+    if (currentLanguage === 'en') return "Categories";
+    if (currentLanguage === 'ja') return "カテゴリ";
+    if (currentLanguage === 'ko') return "카테고리";
+    return "分类";
+  };
+
+  const getDateRangeText = () => {
+    if (currentLanguage === 'en') return "Date Range";
+    if (currentLanguage === 'ja') return "日付範囲";
+    if (currentLanguage === 'ko') return "날짜 범위";
+    return "日期范围";
+  };
+
+  const getAllText = () => {
+    if (currentLanguage === 'en') return "All";
+    if (currentLanguage === 'ja') return "すべて";
+    if (currentLanguage === 'ko') return "모두";
+    return "全部";
+  };
+
+  const getLast24HoursText = () => {
+    if (currentLanguage === 'en') return "Last 24 Hours";
+    if (currentLanguage === 'ja') return "過去24時間";
+    if (currentLanguage === 'ko') return "지난 24시간";
+    return "最近24小时";
+  };
+
+  const getLastWeekText = () => {
+    if (currentLanguage === 'en') return "Last Week";
+    if (currentLanguage === 'ja') return "過去1週間";
+    if (currentLanguage === 'ko') return "지난주";
+    return "最近一周";
+  };
+
+  const getLastMonthText = () => {
+    if (currentLanguage === 'en') return "Last Month";
+    if (currentLanguage === 'ja') return "過去1ヶ月";
+    if (currentLanguage === 'ko') return "지난달";
+    return "最近一月";
+  };
+
+  const getCustomRangeText = () => {
+    if (currentLanguage === 'en') return "Custom Range";
+    if (currentLanguage === 'ja') return "カスタム範囲";
+    if (currentLanguage === 'ko') return "사용자 지정 범위";
+    return "自定义范围";
+  };
+
+  const getSourcesText = () => {
+    if (currentLanguage === 'en') return "Sources";
+    if (currentLanguage === 'ja') return "ソース";
+    if (currentLanguage === 'ko') return "출처";
+    return "来源";
+  };
+
+  const getRelevanceText = () => {
+    if (currentLanguage === 'en') return "Relevance";
+    if (currentLanguage === 'ja') return "関連性";
+    if (currentLanguage === 'ko') return "관련성";
+    return "相关性";
+  };
+
+  const getApplyFiltersText = () => {
+    if (currentLanguage === 'en') return "Apply Filters";
+    if (currentLanguage === 'ja') return "フィルターを適用";
+    if (currentLanguage === 'ko') return "필터 적용";
+    return "应用过滤";
+  };
+
+  // Filter out AI-related categories
+  const filteredCategories = categories.filter(category => 
+    !category.includes('AI') && 
+    !category.includes('大语言模型') && 
+    !category.includes('AI训练技术') && 
+    !category.includes('AI行业动态') && 
+    !category.includes('多模态AI') && 
+    !category.includes('AI编程')
+  );
 
   return (
-    <Card className="w-full bg-slate-800/50 border-slate-700">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center justify-between text-white">
-          <div className="flex items-center space-x-2">
-            <Filter className="h-5 w-5" />
-            <span>{texts.title}</span>
+    <div className="w-full">
+      <Button variant="outline" onClick={onToggle}>
+        Advanced Search
+      </Button>
+      
+      {isOpen && (
+        <div className="mt-4 p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
+          {/* Keywords */}
+          <div className="mb-4 space-y-2">
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              {getKeywordsText()}
+            </Label>
+            <div className="flex items-center space-x-2">
+              <Input
+                type="text"
+                placeholder="Enter keywords"
+                value={keywordsInput}
+                onChange={(e) => setKeywordsInput(e.target.value)}
+                className="flex-1"
+              />
+              <Button type="button" size="sm" onClick={handleAddKeyword}>
+                {getAddText()}
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {filters.keywords.map((keyword) => (
+                <Button
+                  key={keyword}
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleRemoveKeyword(keyword)}
+                >
+                  {keyword}
+                  <X className="ml-2 h-4 w-4" />
+                </Button>
+              ))}
+            </div>
           </div>
-          <Button
-            onClick={onToggle}
-            variant="ghost"
-            size="sm"
-            className="text-slate-400 hover:text-white"
-          >
-            ×
-          </Button>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* 关键词搜索 */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            <Tag className="h-4 w-4 inline mr-2" />
-            {texts.keywords}
-          </label>
-          <div className="flex space-x-2 mb-2">
-            <input
-              type="text"
-              value={keywordInput}
-              onChange={(e) => setKeywordInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && addKeyword()}
-              placeholder={texts.keywordPlaceholder}
-              className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Button onClick={addKeyword} size="sm">
-              {texts.addKeyword}
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {keywords.map((keyword) => (
-              <Badge
-                key={keyword}
-                variant="secondary"
-                className="bg-blue-600 text-white cursor-pointer"
-                onClick={() => removeKeyword(keyword)}
-              >
-                {keyword} ×
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* 分类选择 */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            {texts.categories}
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {categories.filter(cat => cat !== "全部" && cat !== "All" && cat !== "すべて" && cat !== "전체").map((category) => (
-              <Badge
-                key={category}
-                variant={selectedCategories.includes(category) ? "default" : "outline"}
-                className={`cursor-pointer ${
-                  selectedCategories.includes(category)
-                    ? "bg-blue-600 text-white"
-                    : "border-slate-600 text-slate-300 hover:bg-slate-700"
-                }`}
-                onClick={() => toggleCategory(category)}
-              >
-                {category}
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* 日期范围 */}
-          <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">
-              <Calendar className="h-4 w-4 inline mr-2" />
-              {texts.dateRange}
-            </label>
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-600">
-                <SelectItem value="all">{texts.dateOptions.all}</SelectItem>
-                <SelectItem value="today">{texts.dateOptions.today}</SelectItem>
-                <SelectItem value="week">{texts.dateOptions.week}</SelectItem>
-                <SelectItem value="month">{texts.dateOptions.month}</SelectItem>
-                <SelectItem value="year">{texts.dateOptions.year}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* 来源选择 */}
-          <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">
-              <Globe className="h-4 w-4 inline mr-2" />
-              {texts.sources}
-            </label>
-            <div className="flex flex-wrap gap-1">
-              {Object.entries(texts.sourceOptions).map(([key, label]) => {
-                if (key === 'all') return null;
-                return (
-                  <Badge
-                    key={key}
-                    variant={selectedSources.includes(key) ? "default" : "outline"}
-                    className={`cursor-pointer text-xs ${
-                      selectedSources.includes(key)
-                        ? "bg-green-600 text-white"
-                        : "border-slate-600 text-slate-300 hover:bg-slate-700"
-                    }`}
-                    onClick={() => toggleSource(key)}
-                  >
-                    {label}
-                  </Badge>
-                );
-              })}
+          
+          {/* Categories */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              {getCategoriesText()}
+            </Label>
+            <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
+              {filteredCategories.slice(1).map((category) => (
+                <Button
+                  key={category}
+                  type="button"
+                  variant={filters.categories.includes(category) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => toggleCategory(category)}
+                  className="text-xs"
+                >
+                  {category}
+                </Button>
+              ))}
             </div>
           </div>
 
-          {/* 排序方式 */}
-          <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">
-              {texts.sortBy}
-            </label>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-600">
-                <SelectItem value="date">{texts.sortOptions.date}</SelectItem>
-                <SelectItem value="relevance">{texts.sortOptions.relevance}</SelectItem>
-                <SelectItem value="popularity">{texts.sortOptions.popularity}</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Date Range */}
+          <div className="mt-4 space-y-2">
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              {getDateRangeText()}
+            </Label>
+            <div className="flex items-center space-x-4">
+              <Button
+                type="button"
+                variant={filters.dateRange === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleDateRangeChange("all")}
+              >
+                {getAllText()}
+              </Button>
+              <Button
+                type="button"
+                variant={filters.dateRange === "24h" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleDateRangeChange("24h")}
+              >
+                {getLast24HoursText()}
+              </Button>
+              <Button
+                type="button"
+                variant={filters.dateRange === "7d" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleDateRangeChange("7d")}
+              >
+                {getLastWeekText()}
+              </Button>
+              <Button
+                type="button"
+                variant={filters.dateRange === "30d" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleDateRangeChange("30d")}
+              >
+                {getLastMonthText()}
+              </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={filters.dateRange === "custom" ? "default" : "outline"}
+                    size="sm"
+                  >
+                    {getCustomRangeText()}
+                    <CalendarIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="center">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    className="rounded-md border"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
-        </div>
 
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button onClick={handleReset} variant="outline" size="sm">
-            {texts.reset}
-          </Button>
-          <Button onClick={handleSearch} size="sm">
-            {texts.search}
+          {/* Sources */}
+          <div className="mt-4 space-y-2">
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              {getSourcesText()}
+            </Label>
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="source-1"
+                  checked={filters.sources.includes("Source 1")}
+                  onCheckedChange={() => handleSourceChange("Source 1")}
+                />
+                <Label htmlFor="source-1" className="text-sm text-slate-700 dark:text-slate-300">
+                  Source 1
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="source-2"
+                  checked={filters.sources.includes("Source 2")}
+                  onCheckedChange={() => handleSourceChange("Source 2")}
+                />
+                <Label htmlFor="source-2" className="text-sm text-slate-700 dark:text-slate-300">
+                  Source 2
+                </Label>
+              </div>
+            </div>
+          </div>
+
+          {/* Relevance */}
+          <div className="mt-4 space-y-2">
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              {getRelevanceText()}
+            </Label>
+            <Slider
+              defaultValue={[filters.relevance]}
+              max={100}
+              step={1}
+              onValueChange={handleRelevanceChange}
+            />
+          </div>
+
+          {/* Apply Filters Button */}
+          <Button type="button" className="mt-6 w-full" onClick={handleSubmit}>
+            {getApplyFiltersText()}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
-};
-
-export default AdvancedSearch;
+}

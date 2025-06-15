@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { fetchAINews, NewsItem, getApiStatus, hasAnyApiKey, unifyCategory } from "@/services/newsApi";
 import { fetchFreeAINews } from "@/services/freeNewsApi";
 import { translateNewsItem } from "@/services/translationApi";
 
-// 更新为通用全球新闻的模拟数据
+// 更新为通用全球新闻的模拟数据 - 移除AI相关内容
 const mockNews: NewsItem[] = [
   {
     id: "mock-1",
@@ -36,31 +35,31 @@ const mockNews: NewsItem[] = [
   },
   {
     id: "mock-2", 
-    title: "科技创新推动可持续发展，绿色技术成投资热点",
-    summary: "🚀 创新前沿：最新科技创新正在推动全球可持续发展进程！清洁能源、电动汽车、智能制造等绿色技术领域吸引了大量投资，为应对气候变化提供了强有力的技术支撑。探索绿色未来！",
-    content: `科技创新正成为推动全球可持续发展的重要引擎。清洁能源技术、电动汽车产业和智能制造等领域迎来快速发展。
+    title: "新能源汽车产业迎来技术突破，市场前景广阔",
+    summary: "🚗 科技前沿：电动汽车电池技术取得重大突破，续航里程大幅提升！新能源汽车产业链不断完善，充电基础设施快速发展，绿色出行成为新趋势。",
+    content: `新能源汽车产业正迎来技术突破和市场快速发展的关键时期。
 
-## 清洁能源突破
+## 技术突破
 
-### 太阳能技术进步
-最新一代太阳能电池板效率突破25%，成本较去年下降30%，使得太阳能发电更具竞争力。
+### 电池技术进步
+最新一代锂电池技术实现重大突破，单次充电续航里程突破1000公里，充电时间缩短至15分钟。
 
-### 风能发展迅速
-海上风电技术不断成熟，多个大型风电项目投入运营，为清洁能源供应提供有力支撑。
+### 智能驾驶发展
+自动驾驶技术不断成熟，多家车企推出L3级别自动驾驶功能，为未来出行带来便利。
 
-## 投资趋势
+## 市场发展
 
-绿色技术领域吸引了创纪录的投资，全球清洁能源投资额同比增长40%，显示出市场对可持续发展的强烈信心。
+全球新能源汽车销量持续增长，预计今年将突破1500万辆，占汽车总销量的比重进一步提升。
 
-## 政策支持
+## 基础设施建设
 
-各国政府纷纷出台支持政策，通过税收优惠、补贴等方式鼓励企业投资绿色技术，推动产业转型升级。`,
+充电桩建设步伐加快，公共充电网络覆盖范围不断扩大，为新能源汽车普及提供有力支撑。`,
     author: "科技前沿",
     publishDate: new Date(Date.now() - 86400000).toLocaleDateString('zh-CN'),
     category: "科技",
     readTime: "3分钟",
     source: "科技日报",
-    originalUrl: "https://example.com/green-tech"
+    originalUrl: "https://example.com/ev-tech"
   },
   {
     id: "mock-3",
@@ -93,7 +92,7 @@ const mockNews: NewsItem[] = [
   {
     id: "mock-4",
     title: "全球教育改革新趋势：数字化学习成为主流",
-    summary: "📚 教育革新：全球教育正迎来数字化转型浪潮！在线学习平台、虚拟现实教学、个性化学习等创新模式正在重塑教育格局。这场教育革命将为学生提供更优质、更便捷的学习体验！",
+    summary: "📚 教育革新：全球教育正迎来数字化转型浪潮！在线学习平台、个性化学习等创新模式正在重塑教育格局。这场教育革命将为学生提供更优质、更便捷的学习体验！",
     content: `全球教育系统正在经历一场深刻的数字化变革，新技术的应用正在重新定义教学和学习方式。
 
 ## 数字化教学趋势
@@ -141,7 +140,7 @@ const mockNews: NewsItem[] = [
 民众环保意识显著提升，绿色生活方式成为新时尚，企业社会责任意识不断增强。`,
     author: "环保组织",
     publishDate: new Date(Date.now() - 345600000).toLocaleDateString('zh-CN'),
-    category: "社会",
+    category: "环境",
     readTime: "3分钟",
     source: "环球环保网",
     originalUrl: "https://example.com/climate-action"

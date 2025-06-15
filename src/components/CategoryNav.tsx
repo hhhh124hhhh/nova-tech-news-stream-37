@@ -23,6 +23,16 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
     return "更多分类";
   };
 
+  // Filter out AI-related categories
+  const filteredCategories = categories.filter(category => 
+    !category.includes('AI') && 
+    !category.includes('大语言模型') && 
+    !category.includes('AI训练技术') && 
+    !category.includes('AI行业动态') && 
+    !category.includes('多模态AI') && 
+    !category.includes('AI编程')
+  );
+
   // 快速导航到专门页面
   const handleSpecialCategories = (category: string) => {
     if (category === '财经' || category === 'Business' || category === 'ビジネス' || category === '비즈니스') {
@@ -45,17 +55,21 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
       window.location.href = '/health';
       return;
     }
+    if (category === '热点' || category === 'Trending' || category === 'トレンド' || category === '트렌딩') {
+      window.location.href = '/trending';
+      return;
+    }
     
     // 普通分类切换
     onCategoryChange(category);
   };
 
-  // 显示前6个分类，其余放在下拉菜单中
-  const visibleCategories = categories.slice(0, 6);
-  const hiddenCategories = categories.slice(6);
+  // 显示前8个分类，其余放在下拉菜单中
+  const visibleCategories = filteredCategories.slice(0, 8);
+  const hiddenCategories = filteredCategories.slice(8);
 
   return (
-    <nav className="flex items-center space-x-1">
+    <nav className="flex items-center space-x-1 flex-wrap">
       {visibleCategories.map((category) => (
         <Button
           key={category}
@@ -84,7 +98,7 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
               {getMoreCategoriesText()} <ChevronDown className="ml-1 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <DropdownMenuContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-50">
             {hiddenCategories.map((category) => (
               <DropdownMenuItem
                 key={category}
