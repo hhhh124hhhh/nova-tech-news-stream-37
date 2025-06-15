@@ -8,6 +8,7 @@ import { SearchFilters } from "@/components/AdvancedSearch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, Search, TrendingUp, Clock, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("全部");
@@ -78,7 +79,31 @@ const Index = () => {
     };
   };
 
+  const getNavigationCardTexts = () => {
+    if (currentLanguage === 'en') return {
+      trending: { title: 'Trending Now', desc: 'Latest hot topics and viral stories' },
+      breaking: { title: 'Breaking News', desc: 'Real-time updates on important events' },
+      editor: { title: 'Editor\'s Pick', desc: 'Curated content from our editorial team' }
+    };
+    if (currentLanguage === 'ja') return {
+      trending: { title: '今のトレンド', desc: '最新のホットトピックとバイラルストーリー' },
+      breaking: { title: '速報ニュース', desc: '重要な出来事のリアルタイム更新' },
+      editor: { title: '編集者のおすすめ', desc: '編集チームが厳選したコンテンツ' }
+    };
+    if (currentLanguage === 'ko') return {
+      trending: { title: '지금 트렌딩', desc: '최신 핫토픽과 바이럴 스토리' },
+      breaking: { title: '속보', desc: '중요한 사건의 실시간 업데이트' },
+      editor: { title: '에디터 추천', desc: '편집팀이 엄선한 콘텐츠' }
+    };
+    return {
+      trending: { title: '热门趋势', desc: '最新热点话题和病毒式传播的故事' },
+      breaking: { title: '突发新闻', desc: '重要事件的实时更新' },
+      editor: { title: '编辑推荐', desc: '编辑团队精选内容' }
+    };
+  };
+
   const welcomeText = getWelcomeText();
+  const navTexts = getNavigationCardTexts();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
@@ -106,33 +131,33 @@ const Index = () => {
             
             {/* 快速导航卡片 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 border border-slate-200 dark:border-slate-700">
-                <TrendingUp className="h-8 w-8 text-red-500 mx-auto mb-3" />
+              <Link to="/trending" className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 border border-slate-200 dark:border-slate-700 group">
+                <TrendingUp className="h-8 w-8 text-red-500 mx-auto mb-3 group-hover:scale-110 transition-transform" />
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                  {currentLanguage === 'en' ? 'Trending Now' : currentLanguage === 'ja' ? '今のトレンド' : currentLanguage === 'ko' ? '지금 트렌딩' : '热门趋势'}
+                  {navTexts.trending.title}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  {currentLanguage === 'en' ? 'Latest hot topics and viral stories' : currentLanguage === 'ja' ? '最新のホットトピックとバイラルストーリー' : currentLanguage === 'ko' ? '최신 핫토픽과 바이럴 스토리' : '最新热点话题和病毒式传播的故事'}
+                  {navTexts.trending.desc}
                 </p>
-              </div>
+              </Link>
               
               <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 border border-slate-200 dark:border-slate-700">
                 <Clock className="h-8 w-8 text-blue-500 mx-auto mb-3" />
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                  {currentLanguage === 'en' ? 'Breaking News' : currentLanguage === 'ja' ? '速報ニュース' : currentLanguage === 'ko' ? '속보' : '突发新闻'}
+                  {navTexts.breaking.title}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  {currentLanguage === 'en' ? 'Real-time updates on important events' : currentLanguage === 'ja' ? '重要な出来事のリアルタイム更新' : currentLanguage === 'ko' ? '중요한 사건의 실시간 업데이트' : '重要事件的实时更新'}
+                  {navTexts.breaking.desc}
                 </p>
               </div>
               
               <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 border border-slate-200 dark:border-slate-700">
                 <Star className="h-8 w-8 text-yellow-500 mx-auto mb-3" />
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                  {currentLanguage === 'en' ? 'Editor\'s Pick' : currentLanguage === 'ja' ? '編集者のおすすめ' : currentLanguage === 'ko' ? '에디터 추천' : '编辑推荐'}
+                  {navTexts.editor.title}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  {currentLanguage === 'en' ? 'Curated content from our editorial team' : currentLanguage === 'ja' ? '編集チームが厳選したコンテンツ' : currentLanguage === 'ko' ? '편집팀이 엄선한 콘텐츠' : '编辑团队精选内容'}
+                  {navTexts.editor.desc}
                 </p>
               </div>
             </div>

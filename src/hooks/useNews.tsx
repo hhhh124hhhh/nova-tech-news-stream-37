@@ -239,7 +239,7 @@ export const useNews = () => {
 
     // 每30分钟更新一次新闻
     const interval = setInterval(() => {
-      console.log("正在更新最新AI大模型新闻数据...");
+      console.log("正在更新最新全球新闻数据...");
       fetchAllNews();
     }, 30 * 60 * 1000);
 
