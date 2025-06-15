@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { NewsItem } from "@/services/newsApi";
 import { SearchFilters } from "@/components/AdvancedSearch";
@@ -15,7 +14,7 @@ export const useCustomSearch = (allNews: NewsItem[]) => {
       categories: [],
       dateRange: "all",
       sources: [],
-      sortBy: "date"
+      relevance: 50
     }
   });
 
@@ -101,32 +100,12 @@ export const useCustomSearch = (allNews: NewsItem[]) => {
     });
   };
 
-  // 排序
-  const sortNews = (news: NewsItem[], sortBy: string): NewsItem[] => {
+  // 排序 - using date sorting by default
+  const sortNews = (news: NewsItem[]): NewsItem[] => {
     const sorted = [...news];
-    
-    switch (sortBy) {
-      case "date":
-        return sorted.sort((a, b) => 
-          new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
-        );
-      case "relevance":
-        // 基于标题和摘要的相关性排序（简化版）
-        return sorted.sort((a, b) => {
-          const aScore = (a.title.length + a.summary.length) / 2;
-          const bScore = (b.title.length + b.summary.length) / 2;
-          return bScore - aScore;
-        });
-      case "popularity":
-        // 基于来源和内容长度的热门度排序（简化版）
-        return sorted.sort((a, b) => {
-          const aScore = a.content.length + (a.author ? 10 : 0);
-          const bScore = b.content.length + (b.author ? 10 : 0);
-          return bScore - aScore;
-        });
-      default:
-        return sorted;
-    }
+    return sorted.sort((a, b) => 
+      new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+    );
   };
 
   // 执行搜索
@@ -154,7 +133,7 @@ export const useCustomSearch = (allNews: NewsItem[]) => {
       results = filterBySources(results, filters.sources);
     }
     
-    results = sortNews(results, filters.sortBy);
+    results = sortNews(results);
     
     console.log(`搜索结果: ${results.length} 条新闻`);
     setSearchResults(results);
@@ -171,7 +150,7 @@ export const useCustomSearch = (allNews: NewsItem[]) => {
         categories: [],
         dateRange: "all",
         sources: [],
-        sortBy: "date"
+        relevance: 50
       }
     });
   };

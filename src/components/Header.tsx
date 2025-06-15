@@ -4,7 +4,7 @@ import CategoryNav from "@/components/CategoryNav";
 import LanguageSelector from "@/components/LanguageSelector";
 import ApiSettings from "@/components/ApiSettings";
 import SearchBar from "@/components/SearchBar";
-import AdvancedSearch, { SearchFilters } from "@/components/AdvancedSearch";
+import { AdvancedSearch, SearchFilters } from "@/components/AdvancedSearch";
 import { Globe } from "lucide-react";
 
 interface HeaderProps {
