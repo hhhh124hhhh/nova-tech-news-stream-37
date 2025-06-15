@@ -44,108 +44,99 @@ const NEWS_APIS = {
 const categoryMapping = {
   // 中文分类（基准）
   '全部': '全部',
-  '大语言模型': '大语言模型', 
-  'AI绘画': 'AI绘画',
-  'AI视频': 'AI视频',
-  'AI编程': 'AI编程',
-  'AI智能体': 'AI智能体',
-  '多模态AI': '多模态AI',
-  'AI训练技术': 'AI训练技术',
-  'AI应用产品': 'AI应用产品',
-  'AI行业动态': 'AI行业动态',
+  '国际': '国际', 
+  '科技': '科技',
+  '财经': '财经',
+  '体育': '体育',
+  '娱乐': '娱乐',
+  '健康': '健康',
+  '教育': '教育',
+  '政治': '政治',
+  '社会': '社会',
   
   // 英文分类映射
   'All': '全部',
-  'Large Language Models': '大语言模型',
-  'AI Art Generation': 'AI绘画',
-  'AI Video': 'AI视频', 
-  'AI Programming': 'AI编程',
-  'AI Agents': 'AI智能体',
-  'Multimodal AI': '多模态AI',
-  'AI Training Technology': 'AI训练技术',
-  'AI Applications & Products': 'AI应用产品',
-  'AI Industry News': 'AI行业动态',
+  'International': '国际',
+  'Technology': '科技',
+  'Business': '财经',
+  'Sports': '体育',
+  'Entertainment': '娱乐',
+  'Health': '健康',
+  'Education': '教育',
+  'Politics': '政治',
+  'Society': '社会',
   
   // 日文分类映射
   'すべて': '全部',
-  '大規模言語モデル': '大语言模型',
-  'AI画像生成': 'AI绘画',
-  'AI動画': 'AI视频',
-  'AIプログラミング': 'AI编程', 
-  'AIエージェント': 'AI智能体',
-  'マルチモーダルAI': '多模态AI',
-  'AI訓練技術': 'AI训练技术',
-  'AIアプリケーション・製品': 'AI应用产品',
-  'AI業界ニュース': 'AI行业动态',
+  '国際': '国际',
+  'テクノロジー': '科技',
+  'ビジネス': '财经',
+  'スポーツ': '体育',
+  'エンターテイメント': '娱乐',
+  '健康': '健康',
+  '教育': '教育',
+  '政治': '政治',
+  '社会': '社会',
   
   // 韩文分类映射
   '전체': '全部',
-  '대규모 언어 모델': '大语言模型',
-  'AI 그림 생성': 'AI绘画',
-  'AI 비디오': 'AI视频',
-  'AI 프로그래밍': 'AI编程',
-  'AI 에이전트': 'AI智能体',
-  '멀티모달 AI': '多模态AI',
-  'AI 훈련 기술': 'AI训练技术',
-  'AI 애플리케이션 및 제품': 'AI应用产品',
-  'AI 업계 뉴스': 'AI行业动态'
+  '국제': '国际',
+  '기술': '科技',
+  '비즈니스': '财经',
+  '스포츠': '体育',
+  '엔터테인먼트': '娱乐',
+  '건강': '健康',
+  '교육': '教育',
+  '정치': '政治',
+  '사회': '社会'
 };
 
-// AI大模型相关关键词映射到分类 - 扩展关键词库
+// 新闻关键词映射到分类 - 更新为通用新闻关键词
 const categoryKeywords = {
-  '大语言模型': [
-    'gpt', 'chatgpt', 'claude', 'gemini', 'llm', 'language model', 'transformer', 'bert', 'openai', 'anthropic', 
-    'palm', 'llama', 'bard', 'copilot', '大语言模型', '语言模型', '生成式ai', 'generative ai', 'large language',
-    'gpt-4', 'gpt-3', 'davinci', 'text-davinci', 'chat completion', 'completion api', '文本生成', 'text generation'
+  '国际': [
+    'international', 'global', 'world', 'foreign', 'overseas', 'diplomatic', 'embassy', 'summit', 'treaty',
+    '国际', '全球', '世界', '外交', '峰会', '条约', '大使馆', '联合国', 'UN', 'NATO', 'G7', 'G20'
   ],
-  'AI智能体': [
-    'agent', 'assistant', 'chatbot', 'ai agent', 'virtual assistant', 'conversational ai', 'autogpt', 'langchain', 
-    '智能体', '助手', 'autonomous', 'multi-agent', 'agent framework', 'ai bot', 'intelligent agent', 
-    'personal assistant', 'voice assistant', '语音助手', '智能助理', 'workflow automation'
+  '科技': [
+    'technology', 'tech', 'innovation', 'digital', 'internet', 'software', 'hardware', 'startup', 'app',
+    '科技', '技术', '创新', '数字', '互联网', '软件', '硬件', '应用', '创业公司', 'iPhone', 'Android'
   ],
-  '多模态AI': [
-    'multimodal', 'vision', 'dall-e', 'midjourney', 'stable diffusion', 'clip', 'text-to-image', 'image generation', 
-    'computer vision', '多模态', '视觉', 'vision transformer', 'vit', 'image understanding', 'visual ai',
-    'text to image', 'image to text', 'vision language', 'vlm', '视觉语言模型'
+  '财经': [
+    'business', 'finance', 'economy', 'market', 'stock', 'investment', 'banking', 'trading', 'economic',
+    '财经', '经济', '金融', '市场', '股票', '投资', '银行', '贸易', '货币', 'GDP', '通胀', '利率'
   ],
-  'AI训练技术': [
-    'training', 'fine-tuning', 'reinforcement learning', 'rlhf', 'dataset', 'model training', 'neural network', 
-    'deep learning', '训练', '微调', '神经网络', 'machine learning', 'ml', 'gradient descent', 'backpropagation',
-    'optimization', 'hyperparameter', 'overfitting', 'regularization', '深度学习', '机器学习', 'transfer learning'
+  '体育': [
+    'sports', 'football', 'basketball', 'soccer', 'olympic', 'athlete', 'championship', 'tournament', 'game',
+    '体育', '足球', '篮球', '奥运', '运动员', '比赛', '锦标赛', '世界杯', 'NBA', 'FIFA', '马拉松'
   ],
-  'AI应用产品': [
-    'copilot', 'ai tool', 'productivity', 'automation', 'ai application', 'ai software', 'ai service', 
-    'AI应用', '应用产品', 'saas', 'platform', 'api', 'integration', '生产力工具', 'workflow', 'enterprise ai',
-    'business ai', 'ai platform', 'ai solution', '解决方案', 'no-code', 'low-code'
+  '娱乐': [
+    'entertainment', 'celebrity', 'movie', 'music', 'film', 'actor', 'actress', 'concert', 'album',
+    '娱乐', '明星', '电影', '音乐', '演员', '演唱会', '专辑', '导演', '票房', 'Hollywood', '好莱坞'
   ],
-  'AI行业动态': [
-    'funding', 'investment', 'startup', 'company', 'acquisition', 'partnership', 'regulation', 'policy', 'market', 
-    '投资', '公司', '政策', '市场', 'ipo', 'venture capital', 'valuation', 'merger', '并购', '监管', '法规',
-    'industry', 'business', 'economy', 'stock', 'revenue', 'growth', '增长', '收益', '估值'
+  '健康': [
+    'health', 'medical', 'medicine', 'doctor', 'hospital', 'disease', 'treatment', 'vaccine', 'wellness',
+    '健康', '医疗', '医学', '医生', '医院', '疾病', '治疗', '疫苗', '养生', '药物', '临床', '手术'
   ],
-  'AI绘画': [
-    'dall-e', 'midjourney', 'stable diffusion', 'ai art', 'image generation', 'art generation', 'creative ai', 
-    'digital art', 'ai painting', 'AI绘画', '图像生成', 'AI画画', 'text-to-image', 'img2img', 'inpainting',
-    'style transfer', 'artistic', 'creative', '创作', '艺术', 'illustration', 'design', '设计'
+  '教育': [
+    'education', 'school', 'university', 'student', 'teacher', 'learning', 'academic', 'scholarship', 'degree',
+    '教育', '学校', '大学', '学生', '教师', '学习', '学术', '奖学金', '学位', '考试', '招生'
   ],
-  'AI视频': [
-    'sora', 'runway', 'video generation', 'ai video', 'video synthesis', 'deepfake', 'video ai', 'motion graphics', 
-    'AI视频', '视频生成', 'text-to-video', 'video editing', 'animation', '动画', 'motion', '运动',
-    'video creation', 'film', 'movie', 'cinematography', '电影', '影视'
+  '政治': [
+    'politics', 'government', 'election', 'president', 'minister', 'parliament', 'congress', 'policy', 'law',
+    '政治', '政府', '选举', '总统', '部长', '议会', '国会', '政策', '法律', '立法', '投票'
   ],
-  'AI编程': [
-    'copilot', 'code generation', 'programming assistant', 'ai coding', 'github copilot', 'cursor', 'replit', 
-    'ai developer tools', 'code ai', 'AI编程', '代码生成', '编程助手', 'coding', 'programming', 'developer',
-    'software', 'code completion', 'code review', '代码审查', 'debugging', '调试', 'refactoring', '重构'
+  '社会': [
+    'society', 'social', 'community', 'culture', 'lifestyle', 'environment', 'climate', 'population', 'crime',
+    '社会', '社区', '文化', '生活', '环境', '气候', '人口', '犯罪', '慈善', '公益', '民生'
   ]
 };
 
-// 智能分类函数 - 改进的分类逻辑
+// 智能分类函数 - 更新为通用新闻分类逻辑
 const categorizeNews = (title: string, content: string): string => {
   const text = (title + ' ' + content).toLowerCase();
   
   // 检查每个分类的关键词，使用权重系统
-  let bestCategory = 'AI行业动态';
+  let bestCategory = '社会';
   let maxScore = 0;
   
   for (const [category, keywords] of Object.entries(categoryKeywords)) {
