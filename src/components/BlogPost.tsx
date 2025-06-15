@@ -22,6 +22,7 @@ const BlogPost = ({ post }: BlogPostProps) => {
   const { getBlogLikes, toggleLike } = useBlogLikes();
   const [showComments, setShowComments] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const likeData = getBlogLikes(post.id);
 
@@ -38,6 +39,14 @@ const BlogPost = ({ post }: BlogPostProps) => {
     });
   };
 
+  // 默认占位图片
+  const defaultImage = "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80";
+
+  // 处理图片加载错误
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   // Enhanced content with markdown-like formatting
   const renderContent = () => {
     if (isExpanded) {
@@ -46,7 +55,38 @@ const BlogPost = ({ post }: BlogPostProps) => {
           <h1 className="text-3xl font-bold text-white mb-6">{post.title}</h1>
           
           <div className="text-slate-300 mb-6 leading-relaxed">
-            {post.content}
+            {post.content.split('\n\n').map((paragraph, index) => {
+              if (paragraph.startsWith('## ')) {
+                return (
+                  <h2 key={index} className="text-2xl font-bold text-white mb-4 mt-8">
+                    {paragraph.replace('## ', '')}
+                  </h2>
+                );
+              }
+              if (paragraph.startsWith('### ')) {
+                return (
+                  <h3 key={index} className="text-xl font-bold text-white mb-3 mt-6">
+                    {paragraph.replace('### ', '')}
+                  </h3>
+                );
+              }
+              if (paragraph.startsWith('- ')) {
+                return (
+                  <ul key={index} className="text-slate-300 mb-4 list-disc list-inside space-y-2">
+                    {paragraph.split('\n').map((item, itemIndex) => (
+                      <li key={itemIndex} className="text-slate-300">
+                        {item.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-400">$1</strong>')}
+                      </li>
+                    ))}
+                  </ul>
+                );
+              }
+              return (
+                <p key={index} className="text-slate-300 mb-4 leading-relaxed">
+                  {paragraph}
+                </p>
+              );
+            })}
           </div>
 
           <h2 className="text-2xl font-bold text-white mb-4 mt-8">技术要点</h2>
@@ -94,13 +134,27 @@ def create_model():
 
   return (
     <article className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300">
-      {post.imageUrl && (
-        <div className="h-64 overflow-hidden">
+      {(post.imageUrl && !imageError) && (
+        <div className="h-64 overflow-hidden bg-slate-700">
           <img
             src={post.imageUrl}
             alt={post.title}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            onError={handleImageError}
+            loading="lazy"
           />
+        </div>
+      )}
+      
+      {/* 如果图片加载失败或没有图片，显示默认图片 */}
+      {(!post.imageUrl || imageError) && (
+        <div className="h-64 overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-blue-500/30 rounded-lg flex items-center justify-center">
+              <Tag className="h-8 w-8 text-blue-400" />
+            </div>
+            <p className="text-slate-400 text-sm">{post.category}</p>
+          </div>
         </div>
       )}
       

@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { fetchAINews, NewsItem, getApiStatus, hasAnyApiKey, unifyCategory } from "@/services/newsApi";
 import { fetchFreeAINews } from "@/services/freeNewsApi";
 import { translateNewsItem } from "@/services/translationApi";
 
-// 更新AI大模型相关的模拟数据，使用更吸引人的摘要和完整内容
+// 更新AI大模型相关的模拟数据，使用更可靠的图片源
 const mockNews: NewsItem[] = [
   {
     id: "mock-1",
@@ -29,7 +30,7 @@ OpenAI表示，GPT-4.5将在未来几个月内逐步向开发者和企业用户�
     author: "OpenAI团队",
     publishDate: new Date().toLocaleDateString('zh-CN'),
     category: "大语言模型",
-    imageUrl: "https://picsum.photos/800/600?random=1",
+    imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
     readTime: "4分钟",
     source: "OpenAI",
     originalUrl: "https://openai.com/blog/gpt-4-5"
@@ -58,7 +59,7 @@ V6还增加了更强的风格控制能力，用户可以更精确地控制生成
     author: "Midjourney团队",
     publishDate: new Date(Date.now() - 86400000).toLocaleDateString('zh-CN'),
     category: "AI绘画",
-    imageUrl: "https://picsum.photos/800/600?random=2",
+    imageUrl: "https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=800&q=80",
     readTime: "3分钟",
     source: "Midjourney",
     originalUrl: "https://midjourney.com/v6-release"
@@ -85,7 +86,7 @@ Sora的发布将对影视制作、广告创意、教育内容制作等行业产�
     author: "OpenAI",
     publishDate: new Date(Date.now() - 172800000).toLocaleDateString('zh-CN'),
     category: "AI视频",
-    imageUrl: "https://picsum.photos/800/600?random=3",
+    imageUrl: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80",
     readTime: "5分钟",
     source: "OpenAI",
     originalUrl: "https://openai.com/blog/sora"
@@ -113,7 +114,7 @@ Copilot X不仅能够生成高质量的代码片段，还能理解复杂的项�
     author: "GitHub",
     publishDate: new Date(Date.now() - 259200000).toLocaleDateString('zh-CN'),
     category: "AI编程",
-    imageUrl: "https://picsum.photos/800/600?random=4",
+    imageUrl: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
     readTime: "4分钟",
     source: "GitHub",
     originalUrl: "https://github.com/features/copilot"
@@ -141,7 +142,7 @@ AutoGPT 2.0适用于项目管理、数据分析、内容创作等多个领域，
     author: "AutoGPT团队",
     publishDate: new Date(Date.now() - 345600000).toLocaleDateString('zh-CN'),
     category: "AI智能体",
-    imageUrl: "https://picsum.photos/800/600?random=5",
+    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
     readTime: "3分钟",
     source: "AutoGPT",
     originalUrl: "https://autogpt.co"
@@ -170,7 +171,7 @@ AutoGPT 2.0适用于项目管理、数据分析、内容创作等多个领域，
     author: "斯坦福大学",
     publishDate: new Date(Date.now() - 432000000).toLocaleDateString('zh-CN'),
     category: "AI训练技术",
-    imageUrl: "https://picsum.photos/800/600?random=6",
+    imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
     readTime: "6分钟",
     source: "Nature",
     originalUrl: "https://www.nature.com/articles/s41586-023-06525-1"
