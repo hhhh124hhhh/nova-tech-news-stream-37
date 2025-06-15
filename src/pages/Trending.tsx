@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import NewsList from "@/components/NewsList";
 import { useNews } from "@/hooks/useNews";
-import { TrendingUp, Fire, Clock } from "lucide-react";
+import { TrendingUp, Flame, Clock } from "lucide-react";
 
 const Trending = () => {
   const { changeLanguage, currentLanguage, handleApiKeyChange, news } = useNews();
@@ -67,7 +66,7 @@ const Trending = () => {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center space-x-3 mb-4">
             <TrendingUp className="h-12 w-12 text-red-500" />
-            <Fire className="h-10 w-10 text-orange-500 animate-pulse" />
+            <Flame className="h-10 w-10 text-orange-500 animate-pulse" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-white mb-4">
             {getPageTitle()}
