@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNews } from "@/hooks/useNews";
 import { usePodcast } from "@/hooks/usePodcast";
+import { NewsItem } from "@/services/newsApi";
 import NewsCard from "./NewsCard";
 import NewsModal from "./NewsModal";
 import { AlertCircle, CheckCircle, XCircle, Volume2 } from "lucide-react";
