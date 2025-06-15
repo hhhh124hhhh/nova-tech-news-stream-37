@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Calendar, User, Heart, MessageCircle, Clock, Tag } from 'lucide-react';
 import BlogComments from './BlogComments';
 import { useBlogLikes } from '@/hooks/useBlogLikes';
+import { generateBlogImage, getImageFallbacks } from '@/services/imageGenerationApi';
 
 interface BlogPostProps {
   post: {
@@ -23,6 +24,7 @@ const BlogPost = ({ post }: BlogPostProps) => {
   const [showComments, setShowComments] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
   const likeData = getBlogLikes(post.id);
 
@@ -39,84 +41,99 @@ const BlogPost = ({ post }: BlogPostProps) => {
     });
   };
 
-  // 默认占位图片
-  const defaultImage = "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80";
-
-  // 处理图片加载错误
-  const handleImageError = () => {
-    setImageError(true);
+  // 生成图片URL，优先使用AI生成的图片
+  const generatedImageUrl = generateBlogImage(post.id, post.title, post.category);
+  const fallbackImages = getImageFallbacks(post.id);
+  
+  // 当前使用的图片URL
+  const getCurrentImageUrl = () => {
+    if (post.imageUrl && !imageError && currentImageIndex === 0) {
+      return post.imageUrl;
+    }
+    if (currentImageIndex === 0 && !imageError) {
+      return generatedImageUrl;
+    }
+    return fallbackImages[Math.min(currentImageIndex - 1, fallbackImages.length - 1)];
   };
 
-  // Enhanced content with markdown-like formatting
+  // 处理图片加载错误，尝试下一个备选图片
+  const handleImageError = () => {
+    console.log(`图片加载失败，尝试备选图片 ${currentImageIndex + 1}`);
+    if (currentImageIndex < fallbackImages.length) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    } else {
+      setImageError(true);
+    }
+  };
+
+  // 渲染扩展内容
+  const renderExpandedContent = () => {
+    const sections = post.content.split('\n\n');
+    
+    return (
+      <div className="prose prose-invert max-w-none">
+        <h1 className="text-3xl font-bold text-white mb-6">{post.title}</h1>
+        
+        <div className="text-slate-300 mb-6 leading-relaxed space-y-4">
+          {sections.map((section, index) => {
+            if (section.startsWith('## ')) {
+              return (
+                <h2 key={index} className="text-2xl font-bold text-white mb-4 mt-8">
+                  {section.replace('## ', '')}
+                </h2>
+              );
+            }
+            if (section.startsWith('### ')) {
+              return (
+                <h3 key={index} className="text-xl font-bold text-white mb-3 mt-6">
+                  {section.replace('### ', '')}
+                </h3>
+              );
+            }
+            if (section.includes('```')) {
+              const codeContent = section.replace(/```\w*\n?/g, '').replace(/```/g, '');
+              return (
+                <pre key={index} className="bg-slate-900 rounded-lg mb-6 p-4 overflow-x-auto">
+                  <code className="text-green-300 text-sm">{codeContent}</code>
+                </pre>
+              );
+            }
+            if (section.startsWith('- ') || section.includes('\n- ')) {
+              const items = section.split('\n').filter(item => item.startsWith('- '));
+              return (
+                <ul key={index} className="text-slate-300 mb-4 list-disc list-inside space-y-2">
+                  {items.map((item, itemIndex) => (
+                    <li key={itemIndex} className="text-slate-300">
+                      {item.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-400">$1</strong>')
+                        .split('<strong class="text-blue-400">').map((part, partIndex) => {
+                          if (partIndex === 0) return part;
+                          const [boldText, rest] = part.split('</strong>');
+                          return (
+                            <span key={partIndex}>
+                              <strong className="text-blue-400">{boldText}</strong>
+                              {rest}
+                            </span>
+                          );
+                        })}
+                    </li>
+                  ))}
+                </ul>
+              );
+            }
+            return (
+              <p key={index} className="text-slate-300 mb-4 leading-relaxed">
+                {section}
+              </p>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     if (isExpanded) {
-      return (
-        <div className="prose prose-invert max-w-none">
-          <h1 className="text-3xl font-bold text-white mb-6">{post.title}</h1>
-          
-          <div className="text-slate-300 mb-6 leading-relaxed">
-            {post.content.split('\n\n').map((paragraph, index) => {
-              if (paragraph.startsWith('## ')) {
-                return (
-                  <h2 key={index} className="text-2xl font-bold text-white mb-4 mt-8">
-                    {paragraph.replace('## ', '')}
-                  </h2>
-                );
-              }
-              if (paragraph.startsWith('### ')) {
-                return (
-                  <h3 key={index} className="text-xl font-bold text-white mb-3 mt-6">
-                    {paragraph.replace('### ', '')}
-                  </h3>
-                );
-              }
-              if (paragraph.startsWith('- ')) {
-                return (
-                  <ul key={index} className="text-slate-300 mb-4 list-disc list-inside space-y-2">
-                    {paragraph.split('\n').map((item, itemIndex) => (
-                      <li key={itemIndex} className="text-slate-300">
-                        {item.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-400">$1</strong>')}
-                      </li>
-                    ))}
-                  </ul>
-                );
-              }
-              return (
-                <p key={index} className="text-slate-300 mb-4 leading-relaxed">
-                  {paragraph}
-                </p>
-              );
-            })}
-          </div>
-
-          <h2 className="text-2xl font-bold text-white mb-4 mt-8">技术要点</h2>
-          <ul className="text-slate-300 mb-6 list-disc list-inside space-y-2">
-            <li><strong className="text-blue-400">人工智能技术</strong>: 深度学习、机器学习</li>
-            <li><strong className="text-blue-400">应用场景</strong>: 自然语言处理、计算机视觉</li>
-            <li><strong className="text-blue-400">发展趋势</strong>: 多模态AI、边缘计算</li>
-          </ul>
-
-          <h2 className="text-2xl font-bold text-white mb-4 mt-8">代码示例</h2>
-          <pre className="bg-slate-900 rounded-lg mb-6 p-4 overflow-x-auto">
-            <code className="text-green-300 text-sm">
-{`import tensorflow as tf
-
-def create_model():
-    model = tf.keras.Sequential([
-        tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(10, activation='softmax')
-    ])
-    return model`}
-            </code>
-          </pre>
-
-          <h2 className="text-2xl font-bold text-white mb-4 mt-8">总结</h2>
-          <p className="text-slate-300 leading-relaxed">
-            人工智能技术正在快速发展，为各行各业带来新的机遇和挑战。通过不断的技术创新和应用实践，AI将在未来发挥越来越重要的作用。
-          </p>
-        </div>
-      );
+      return renderExpandedContent();
     }
 
     return (
@@ -134,10 +151,11 @@ def create_model():
 
   return (
     <article className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300">
-      {(post.imageUrl && !imageError) && (
+      {/* 显示生成的图片或备选图片 */}
+      {!imageError && (
         <div className="h-64 overflow-hidden bg-slate-700">
           <img
-            src={post.imageUrl}
+            src={getCurrentImageUrl()}
             alt={post.title}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             onError={handleImageError}
@@ -146,8 +164,8 @@ def create_model():
         </div>
       )}
       
-      {/* 如果图片加载失败或没有图片，显示默认图片 */}
-      {(!post.imageUrl || imageError) && (
+      {/* 图片加载失败时的占位符 */}
+      {imageError && (
         <div className="h-64 overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 mx-auto mb-4 bg-blue-500/30 rounded-lg flex items-center justify-center">
