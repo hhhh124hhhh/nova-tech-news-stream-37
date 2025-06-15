@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -30,7 +29,7 @@ interface AdvancedSearchProps {
   onToggle: () => void;
 }
 
-export function AdvancedSearch({ onAdvancedSearch, currentLanguage, categories, isOpen, onToggle }: AdvancedSearchProps) {
+const AdvancedSearch = ({ onAdvancedSearch, currentLanguage, categories, isOpen, onToggle }: AdvancedSearchProps) => {
   const [keywordsInput, setKeywordsInput] = useState("");
   const [filters, setFilters] = useState<SearchFilters>({
     keywords: [],
@@ -349,4 +348,7 @@ export function AdvancedSearch({ onAdvancedSearch, currentLanguage, categories, 
       )}
     </div>
   );
-}
+};
+
+export default AdvancedSearch;
+export { AdvancedSearch };
