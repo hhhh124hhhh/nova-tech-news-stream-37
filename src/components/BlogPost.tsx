@@ -4,24 +4,6 @@ import { Calendar, User, Heart, MessageCircle, Clock, Tag } from 'lucide-react';
 import BlogComments from './BlogComments';
 import { useBlogLikes } from '@/hooks/useBlogLikes';
 
-// Dynamic import for react-markdown to handle loading
-let ReactMarkdown: any = null;
-let remarkGfm: any = null;
-
-// Dynamically import markdown dependencies
-const loadMarkdown = async () => {
-  if (!ReactMarkdown) {
-    try {
-      const markdown = await import('react-markdown');
-      const gfm = await import('remark-gfm');
-      ReactMarkdown = markdown.default;
-      remarkGfm = gfm.default;
-    } catch (error) {
-      console.warn('Failed to load markdown dependencies:', error);
-    }
-  }
-};
-
 interface BlogPostProps {
   post: {
     id: string;
@@ -40,20 +22,11 @@ const BlogPost = ({ post }: BlogPostProps) => {
   const { getBlogLikes, toggleLike } = useBlogLikes();
   const [showComments, setShowComments] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [markdownLoaded, setMarkdownLoaded] = useState(false);
   
   const likeData = getBlogLikes(post.id);
 
   const handleLike = () => {
     toggleLike(post.id);
-  };
-
-  const handleExpand = async () => {
-    if (!markdownLoaded) {
-      await loadMarkdown();
-      setMarkdownLoaded(true);
-    }
-    setIsExpanded(!isExpanded);
   };
 
   const formatDate = (dateString: string) => {
@@ -65,22 +38,28 @@ const BlogPost = ({ post }: BlogPostProps) => {
     });
   };
 
-  // Sample markdown content for demonstration
-  const markdownContent = `
-# ${post.title}
+  // Enhanced content with markdown-like formatting
+  const renderContent = () => {
+    if (isExpanded) {
+      return (
+        <div className="prose prose-invert max-w-none">
+          <h1 className="text-3xl font-bold text-white mb-6">{post.title}</h1>
+          
+          <div className="text-slate-300 mb-6 leading-relaxed">
+            {post.content}
+          </div>
 
-${post.content}
+          <h2 className="text-2xl font-bold text-white mb-4 mt-8">技术要点</h2>
+          <ul className="text-slate-300 mb-6 list-disc list-inside space-y-2">
+            <li><strong className="text-blue-400">人工智能技术</strong>: 深度学习、机器学习</li>
+            <li><strong className="text-blue-400">应用场景</strong>: 自然语言处理、计算机视觉</li>
+            <li><strong className="text-blue-400">发展趋势</strong>: 多模态AI、边缘计算</li>
+          </ul>
 
-## 技术要点
-
-- **人工智能技术**: 深度学习、机器学习
-- **应用场景**: 自然语言处理、计算机视觉
-- **发展趋势**: 多模态AI、边缘计算
-
-## 代码示例
-
-\`\`\`python
-import tensorflow as tf
+          <h2 className="text-2xl font-bold text-white mb-4 mt-8">代码示例</h2>
+          <pre className="bg-slate-900 rounded-lg mb-6 p-4 overflow-x-auto">
+            <code className="text-green-300 text-sm">
+{`import tensorflow as tf
 
 def create_model():
     model = tf.keras.Sequential([
@@ -88,49 +67,29 @@ def create_model():
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(10, activation='softmax')
     ])
-    return model
-\`\`\`
+    return model`}
+            </code>
+          </pre>
 
-## 总结
-
-人工智能技术正在快速发展，为各行各业带来新的机遇和挑战。
-  `;
-
-  const renderMarkdownContent = () => {
-    if (ReactMarkdown && remarkGfm) {
-      return (
-        <div className="prose prose-invert max-w-none">
-          <ReactMarkdown 
-            remarkPlugins={[remarkGfm]}
-            className="text-slate-300"
-            components={{
-              h1: ({node, ...props}: any) => <h1 className="text-3xl font-bold text-white mb-4" {...props} />,
-              h2: ({node, ...props}: any) => <h2 className="text-2xl font-bold text-white mb-3 mt-6" {...props} />,
-              h3: ({node, ...props}: any) => <h3 className="text-xl font-bold text-white mb-2 mt-4" {...props} />,
-              p: ({node, ...props}: any) => <p className="text-slate-300 mb-4 leading-relaxed" {...props} />,
-              ul: ({node, ...props}: any) => <ul className="text-slate-300 mb-4 list-disc list-inside space-y-1" {...props} />,
-              li: ({node, ...props}: any) => <li className="text-slate-300" {...props} />,
-              code: ({node, inline, ...props}: any) => 
-                inline ? 
-                  <code className="bg-slate-700 text-blue-300 px-1 py-0.5 rounded text-sm" {...props} /> :
-                  <code className="block bg-slate-900 text-green-300 p-4 rounded-lg overflow-x-auto text-sm" {...props} />,
-              pre: ({node, ...props}: any) => <pre className="bg-slate-900 rounded-lg mb-4" {...props} />,
-              strong: ({node, ...props}: any) => <strong className="text-blue-400 font-semibold" {...props} />
-            }}
-          >
-            {markdownContent}
-          </ReactMarkdown>
-        </div>
-      );
-    } else {
-      // Fallback rendering without markdown
-      return (
-        <div className="prose prose-invert max-w-none">
-          <h1 className="text-3xl font-bold text-white mb-4">{post.title}</h1>
-          <div className="text-slate-300 whitespace-pre-wrap">{post.content}</div>
+          <h2 className="text-2xl font-bold text-white mb-4 mt-8">总结</h2>
+          <p className="text-slate-300 leading-relaxed">
+            人工智能技术正在快速发展，为各行各业带来新的机遇和挑战。通过不断的技术创新和应用实践，AI将在未来发挥越来越重要的作用。
+          </p>
         </div>
       );
     }
+
+    return (
+      <>
+        <h2 className="text-2xl font-bold text-white mb-4 hover:text-blue-400 transition-colors cursor-pointer">
+          {post.title}
+        </h2>
+        
+        <p className="text-slate-300 mb-6 leading-relaxed">
+          {post.excerpt}
+        </p>
+      </>
+    );
   };
 
   return (
@@ -167,19 +126,7 @@ def create_model():
           </div>
         </div>
 
-        {!isExpanded ? (
-          <>
-            <h2 className="text-2xl font-bold text-white mb-4 hover:text-blue-400 transition-colors cursor-pointer">
-              {post.title}
-            </h2>
-            
-            <p className="text-slate-300 mb-6 leading-relaxed">
-              {post.excerpt}
-            </p>
-          </>
-        ) : (
-          renderMarkdownContent()
-        )}
+        {renderContent()}
 
         <div className="flex items-center justify-between mt-6">
           <div className="flex items-center space-x-4">
@@ -205,7 +152,7 @@ def create_model():
           </div>
           
           <button 
-            onClick={handleExpand}
+            onClick={() => setIsExpanded(!isExpanded)}
             className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
           >
             {isExpanded ? '收起' : '阅读全文'} →
