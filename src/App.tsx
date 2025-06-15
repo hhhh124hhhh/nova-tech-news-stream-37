@@ -5,10 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
-import Blog from "./pages/Blog";
-import Trending from "./pages/Trending";
-import Tech from "./pages/Tech";
 import Business from "./pages/Business";
+import Tech from "./pages/Tech";
+import Entertainment from "./pages/Entertainment";
+import Sports from "./pages/Sports";
+import Health from "./pages/Health";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,10 +22,11 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/trending" element={<Trending />} />
-            <Route path="/tech" element={<Tech />} />
             <Route path="/business" element={<Business />} />
+            <Route path="/tech" element={<Tech />} />
+            <Route path="/entertainment" element={<Entertainment />} />
+            <Route path="/sports" element={<Sports />} />
+            <Route path="/health" element={<Health />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

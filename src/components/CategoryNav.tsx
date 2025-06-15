@@ -23,16 +23,43 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
     return "更多分类";
   };
 
-  // 显示前4个分类，其余放在下拉菜单中
-  const visibleCategories = categories.slice(0, 4);
-  const hiddenCategories = categories.slice(4);
+  // 快速导航到专门页面
+  const handleSpecialCategories = (category: string) => {
+    if (category === '财经' || category === 'Business' || category === 'ビジネス' || category === '비즈니스') {
+      window.location.href = '/business';
+      return;
+    }
+    if (category === '科技' || category === 'Technology' || category === 'テクノロジー' || category === '기술') {
+      window.location.href = '/tech';
+      return;
+    }
+    if (category === '娱乐' || category === 'Entertainment' || category === 'エンターテイメント' || category === '엔터테인먼트') {
+      window.location.href = '/entertainment';
+      return;
+    }
+    if (category === '体育' || category === 'Sports' || category === 'スポーツ' || category === '스포츠') {
+      window.location.href = '/sports';
+      return;
+    }
+    if (category === '健康' || category === 'Health' || category === '健康日' || category === '건강한') {
+      window.location.href = '/health';
+      return;
+    }
+    
+    // 普通分类切换
+    onCategoryChange(category);
+  };
+
+  // 显示前6个分类，其余放在下拉菜单中
+  const visibleCategories = categories.slice(0, 6);
+  const hiddenCategories = categories.slice(6);
 
   return (
     <nav className="flex items-center space-x-1">
       {visibleCategories.map((category) => (
         <Button
           key={category}
-          onClick={() => onCategoryChange(category)}
+          onClick={() => handleSpecialCategories(category)}
           variant={selectedCategory === category ? "default" : "ghost"}
           size="sm"
           className={`transition-all duration-200 text-xs whitespace-nowrap ${
@@ -61,7 +88,7 @@ const CategoryNav = ({ categories, selectedCategory, onCategoryChange, currentLa
             {hiddenCategories.map((category) => (
               <DropdownMenuItem
                 key={category}
-                onClick={() => onCategoryChange(category)}
+                onClick={() => handleSpecialCategories(category)}
                 className={`text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-300 dark:hover:text-blue-400 dark:hover:bg-slate-700 cursor-pointer ${
                   selectedCategory === category ? 'bg-blue-50 text-blue-600 dark:bg-slate-700 dark:text-blue-400' : ''
                 }`}
